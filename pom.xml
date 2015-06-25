@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <packaging>pom</packaging>
+    <modules>
+        <module>treeleaf-web</module>
+        <module>treeleaf-common</module>
+        <module>treeleaf-cache</module>
+        <module>treeleaf-db</module>
+    </modules>
+
+    <groupId>org.treeleaf.framework</groupId>
+    <artifactId>treeleaf</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!--junit -->
+        <dependency>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+            <version>4.11</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--log -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.7</version>
+        </dependency>
+
+    </dependencies>
+
+    <!-- 设置为开源中国maven加速访问 -->
+    <repositories>
+        <!-- 开源中国maven主库 -->
+        <repository>
+            <id>central</id>
+            <name>OSChina Repository</name>
+            <url>http://maven.oschina.net/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <!-- 可以加载开源中国maven库中的开户库 -->
+        <repository>
+            <id>thirdparty</id>
+            <name>OSChina Repository</name>
+            <url>http://maven.oschina.net/content/repositories/thirdparty/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+</project>
