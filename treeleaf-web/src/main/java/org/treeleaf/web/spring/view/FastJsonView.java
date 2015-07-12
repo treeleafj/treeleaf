@@ -1,22 +1,28 @@
 package org.treeleaf.web.spring.view;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.servlet.view.AbstractView;
 import org.treeleaf.common.json.JsonUtils;
+import org.treeleaf.web.spring.CommonConstant;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
+/**
+ * 拓展springmvc的视图,基于FastJson提供的json解析功能
+ * <p/>
+ * Created by yaoshuhong on 2015/4/29.
+ */
 public class FastJsonView extends AbstractView {
 
-    public static final String CONTENT_TYPE = "application/json";
 
-    private String charset = "UTF-8";
+    private String charset = CommonConstant.DEFAULT_CHARSET;
 
     private Object obj;
 
     public FastJsonView() {
-        setContentType(CONTENT_TYPE);
+        setContentType(CommonConstant.CONTENT_TYPE_JSON);
         setExposePathVariables(false);
     }
 
@@ -37,8 +43,7 @@ public class FastJsonView extends AbstractView {
         }
 
         String json = JsonUtils.toJson(this.obj);
-        response.getWriter().println(json);
-        response.getWriter().close();
+        IOUtils.write(json, response.getOutputStream());
     }
 
     public String getCharset() {
