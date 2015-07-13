@@ -35,11 +35,11 @@ public class FastBeanUtils extends BeanUtils {
      * @throws java.lang.reflect.InvocationTargetException
      * @throws IllegalArgumentException
      */
-    public static Object fastPopulate(Class<?> classz, Map<String, Object> properties) {
+        public static <T> T fastPopulate(Class<T> classz, Map<String, Object> properties) {
         try {
             Object obj = classz.newInstance();
             fastPopulate(obj, properties);
-            return obj;
+            return (T) obj;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
