@@ -30,7 +30,7 @@ public class HttpPost extends Http {
      * 请求远程地址
      *
      * @return
-     * @throws com.icard.common.http.HttpException
+     * @throws org.treeleaf.common.http.HttpException
      */
     public String post() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
