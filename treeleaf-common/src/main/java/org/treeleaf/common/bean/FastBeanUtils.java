@@ -4,7 +4,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**
@@ -36,11 +35,14 @@ public class FastBeanUtils extends BeanUtils {
      * @throws java.lang.reflect.InvocationTargetException
      * @throws IllegalArgumentException
      */
-    public static Object fastPopulate(Class<?> classz, Map<String, Object> properties)
-            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Object obj = classz.newInstance();
-        fastPopulate(obj, properties);
-        return obj;
+    public static Object fastPopulate(Class<?> classz, Map<String, Object> properties) {
+        try {
+            Object obj = classz.newInstance();
+            fastPopulate(obj, properties);
+            return obj;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -52,24 +54,31 @@ public class FastBeanUtils extends BeanUtils {
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
-    public static void fastPopulate(Object obj, Map<String, Object> properties) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    public static void fastPopulate(Object obj, Map<String, Object> properties) {
         Class<?> classz = obj.getClass();
         Map<String, PropertiesEntry> map = getFastBeanCache().getPropertiesEntryMap(classz);
         if (map.size() > 0) {
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                PropertiesEntry pe = map.get(entry.getKey());
-                if (pe != null) {
-                    if (pe.getSet() != null) {
-                        Object v = ConvertUtils.convert(entry.getValue(), pe.getType());
-                        pe.getSet().invoke(obj, v);
+            try {
+                for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                    PropertiesEntry pe = map.get(entry.getKey());
+                    if (pe != null) {
+                        if (pe.getSet() != null) {
+                            Object v = ConvertUtils.convert(entry.getValue(), pe.getType());
+
+                            pe.getSet().invoke(obj, v);
+
+                        }
                     }
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
     /**
      * 对Field进行设置,如果入参value的类型跟Field的类型不匹配,会尝试进行转换
+     *
      * @param field
      * @param obj
      * @param v
@@ -86,6 +95,7 @@ public class FastBeanUtils extends BeanUtils {
 
     /**
      * 获取Field的值
+     *
      * @param field
      * @param obj
      * @return
