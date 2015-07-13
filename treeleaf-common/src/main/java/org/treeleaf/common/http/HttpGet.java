@@ -4,7 +4,10 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -17,18 +20,28 @@ public class HttpGet extends Http {
 
     private static Logger log = LoggerFactory.getLogger(HttpGet.class);
 
+    public String get() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        get(out);
+        try {
+            return out.toString(this.getEncoding());
+        } catch (UnsupportedEncodingException e) {
+            throw new HttpException("将返回数据转移为" + getEncoding() + "失败", e);
+        }
+    }
+
     /**
      * 请求远程地址
      * @return
-     * @throws org.treeleaf.common.http.HttpException
+     * @throws com.icard.common.http.HttpException
      */
-    public String get() {
+    public void get(OutputStream out) {
 
         String address = this.getAddress();
 
         //组装参数
         if (this.getParam() != null && !this.getParam().isEmpty()) {
-            address += ("?" + HttpUtils.paramUrlEncode2String(this.getParam()));
+            address += ("?" + Http.param2String(this.getParam()));
         }
 
         HttpURLConnection conn = null;
@@ -53,7 +66,7 @@ public class HttpGet extends Http {
             // 定义 BufferedReader 输入流来读取URL的响应
             in = conn.getInputStream();
 
-            return IOUtils.toString(in, this.getEncoding());
+            IOUtils.copy(in, out);
 
         } catch (Exception e) {
 
@@ -62,6 +75,7 @@ public class HttpGet extends Http {
         } finally {
 
             IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
 
             if (conn != null) {
                 try {
@@ -72,6 +86,5 @@ public class HttpGet extends Http {
             }
         }
     }
-
 
 }

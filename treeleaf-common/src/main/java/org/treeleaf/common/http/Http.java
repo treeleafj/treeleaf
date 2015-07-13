@@ -1,13 +1,22 @@
 package org.treeleaf.common.http;
 
-import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
 /**
  * Http请求父类
  *
  * Created by yaoshuhong on 2015/6/29.
  */
 public abstract class Http {
+
+    public static final String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
+
+    public static final String CONTENT_TYPE_JSON = "application/json";
+
+    public static final String NAME_CONTENT_TYPE = "Content-Type";
 
     /**
      * 链接超时
@@ -38,6 +47,41 @@ public abstract class Http {
      * 请求参数
      */
     private Map<String, String> param;
+
+    /**
+     * 将map参数使用'&'符号链接起来
+     *
+     * @param param 参数
+     * @return
+     */
+    public static String param2String(Map<String, String> param) {
+
+        if (param == null || param.isEmpty()) {
+            return StringUtils.EMPTY;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            String s1 = "=";
+            String s2 = "&";
+
+            for (Map.Entry<String, String> entry : param.entrySet()) {
+                if (entry.getValue() != null) {
+                    stringBuilder.append(entry.getKey());
+                    stringBuilder.append(s1);
+                    stringBuilder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                    stringBuilder.append(s2);
+                }
+            }
+
+            if (stringBuilder.length() > 0) {
+                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            }
+            return stringBuilder.toString();
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(String.format("参数中%s存在非法字符串,无法使用%s转义.", param.toString(), "UTF-8"), e);
+        }
+    }
 
     public void addHeader(String name, String value) {
         this.header.addHeader(name, value);
