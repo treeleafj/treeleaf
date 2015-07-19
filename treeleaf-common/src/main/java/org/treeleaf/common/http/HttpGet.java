@@ -33,7 +33,7 @@ public class HttpGet extends Http {
     /**
      * 请求远程地址
      * @return
-     * @throws com.icard.common.http.HttpException
+     * @throws org.treeleaf.common.http.HttpException
      */
     public void get(OutputStream out) {
 
