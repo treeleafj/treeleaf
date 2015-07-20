@@ -1,5 +1,7 @@
 package org.treeleaf.web.spring.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -15,6 +17,8 @@ import org.treeleaf.web.spring.view.TextView;
  * @see org.treeleaf.web.Text
  */
 public class TextHandlerMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
+
+    private static Logger log = LoggerFactory.getLogger(TextHandlerMethodReturnValueHandler.class);
 
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {
