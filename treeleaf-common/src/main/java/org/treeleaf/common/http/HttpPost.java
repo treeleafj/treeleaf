@@ -49,14 +49,16 @@ public class HttpPost extends Http {
      */
     public void post(OutputStream out) {
 
-        String paramStr;
+        String paramStr = "";
+
         if (StringUtils.isNotBlank(this.body)) {
-            paramStr = Http.param2String(this.getParam());
-        } else {
             paramStr = this.body;
+        } else if (this.getParam() != null) {
+            paramStr = Http.param2String(this.getParam());
         }
 
         InputStream in = null;
+        OutputStream out2 = null;
         HttpURLConnection conn = null;
 
         try {
@@ -64,23 +66,32 @@ public class HttpPost extends Http {
             // 打开和URL之间的连接
             conn = (HttpURLConnection) url.openConnection();
 
+            conn.setAllowUserInteraction(false);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
             conn.setConnectTimeout(this.getConnectTimeout());
             conn.setReadTimeout(this.getReadTimeout());
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
 
             // 设置的请求属性
             for (String name : this.getHeader()) {
                 conn.setRequestProperty(name, this.getHeader().getHeader(name));
             }
 
-            out = conn.getOutputStream();
+            out2 = conn.getOutputStream();
 
-            IOUtils.write(paramStr, out, this.getEncoding());
+            IOUtils.write(paramStr, out2, this.getEncoding());
 
             in = conn.getInputStream();
+
+            IOUtils.copy(in, out);
+
         } catch (Exception e) {
             throw new HttpException("post方式请求远程地址失败", e);
         } finally {
             IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(out2);
             IOUtils.closeQuietly(in);
             if (conn != null) {
                 try {
