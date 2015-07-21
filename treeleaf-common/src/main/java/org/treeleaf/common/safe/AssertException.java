@@ -1,10 +1,12 @@
 package org.treeleaf.common.safe;
 
+import org.treeleaf.common.exception.BaseException;
+
 /**
  * @Author leaf
  * 2015/6/26 0026 0:36.
  */
-public class AssertException extends RuntimeException {
+public class AssertException extends RuntimeException implements BaseException{
 
     private String message;
 
