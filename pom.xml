@@ -38,26 +38,26 @@
 
     </dependencies>
 
-    <!-- 设置为开源中国maven加速访问 -->
-    <repositories>
-        <!-- 开源中国maven主库 -->
-        <repository>
-            <id>central</id>
-            <name>OSChina Repository</name>
-            <url>http://maven.oschina.net/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <!-- 可以加载开源中国maven库中的开户库 -->
-        <repository>
-            <id>thirdparty</id>
-            <name>OSChina Repository</name>
-            <url>http://maven.oschina.net/content/repositories/thirdparty/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
+    <!--&lt;!&ndash; 设置为开源中国maven加速访问 &ndash;&gt;-->
+    <!--<repositories>-->
+        <!--&lt;!&ndash; 开源中国maven主库 &ndash;&gt;-->
+        <!--<repository>-->
+            <!--<id>central</id>-->
+            <!--<name>OSChina Repository</name>-->
+            <!--<url>http://maven.oschina.net/content/groups/public/</url>-->
+            <!--<releases>-->
+                <!--<enabled>true</enabled>-->
+            <!--</releases>-->
+        <!--</repository>-->
+        <!--&lt;!&ndash; 可以加载开源中国maven库中的开户库 &ndash;&gt;-->
+        <!--<repository>-->
+            <!--<id>thirdparty</id>-->
+            <!--<name>OSChina Repository</name>-->
+            <!--<url>http://maven.oschina.net/content/repositories/thirdparty/</url>-->
+            <!--<releases>-->
+                <!--<enabled>true</enabled>-->
+            <!--</releases>-->
+        <!--</repository>-->
+    <!--</repositories>-->
 
 </project>

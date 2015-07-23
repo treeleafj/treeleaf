@@ -31,6 +31,11 @@ public class HtmlHandlerMethodReturnValueHandler implements HandlerMethodReturnV
         //设置为json视图并输出数据
         Html html = (Html) returnValue;
         if (html != null) {
+
+            if (html.getPath() != null) {
+                mavContainer.setViewName(html.getPath());
+            }
+
             if (html.getModel() != null) {
                 mavContainer.getModel().put("model", html.getModel());
             }
