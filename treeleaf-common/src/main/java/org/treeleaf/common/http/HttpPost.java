@@ -30,7 +30,7 @@ public class HttpPost extends Http {
      * 请求远程地址
      *
      * @return
-     * @throws org.treeleaf.common.http.HttpException
+     * @throws com.icard.common.http.HttpException
      */
     public String post() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -64,7 +64,7 @@ public class HttpPost extends Http {
         try {
             URL url = new URL(this.getAddress());
             // 打开和URL之间的连接
-            conn = (HttpURLConnection) url.openConnection();
+            conn = getHttpURLConnection(url);
 
             conn.setAllowUserInteraction(false);
             conn.setUseCaches(false);
@@ -101,6 +101,10 @@ public class HttpPost extends Http {
                 }
             }
         }
+    }
+
+    protected HttpURLConnection getHttpURLConnection(URL url) throws Exception {
+        return  (HttpURLConnection) url.openConnection();
     }
 
     public String getBody() {

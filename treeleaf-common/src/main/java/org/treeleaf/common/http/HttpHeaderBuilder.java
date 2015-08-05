@@ -11,9 +11,10 @@ public class HttpHeaderBuilder {
      */
     public static HttpHeader buildDefaultHttpHeader() {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.addHeader("accept", "*/*");
-        httpHeader.addHeader("connection", "Keep-Alive");
-        httpHeader.addHeader("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        httpHeader.addHeader("Accept", "*/*");
+        httpHeader.addHeader("Connection", "Keep-Alive");
+        httpHeader.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        httpHeader.addHeader("Content-Type", "application/x-www-form-urlencoded");
         return httpHeader;
     }
 

@@ -33,7 +33,7 @@ public class HttpGet extends Http {
     /**
      * 请求远程地址
      * @return
-     * @throws org.treeleaf.common.http.HttpException
+     * @throws com.icard.common.http.HttpException
      */
     public void get(OutputStream out) {
 
@@ -51,7 +51,7 @@ public class HttpGet extends Http {
             URL url = new URL(address);
 
             // 打开和URL之间的连接
-            conn = (HttpURLConnection) url.openConnection();
+            conn = getHttpURLConnection(url);
 
             conn.setConnectTimeout(this.getConnectTimeout());
             conn.setReadTimeout(this.getReadTimeout());
@@ -85,6 +85,10 @@ public class HttpGet extends Http {
                 }
             }
         }
+    }
+
+    protected HttpURLConnection getHttpURLConnection(URL url) throws Exception {
+        return (HttpURLConnection) url.openConnection();
     }
 
 }

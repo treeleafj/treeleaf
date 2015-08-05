@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class HttpHeader implements Iterable<String> {
 
-    private Map<String, String> header = new HashMap<String, String>();
+    private Map<String, String> header = new HashMap<>();
 
     public void addHeader(String name, String val) {
         this.header.put(name, val);
