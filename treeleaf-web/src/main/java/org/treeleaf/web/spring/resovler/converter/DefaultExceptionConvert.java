@@ -1,6 +1,7 @@
 package org.treeleaf.web.spring.resovler.converter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.treeleaf.common.exception.RetCodeException;
 import org.treeleaf.web.Json;
 import org.treeleaf.web.spring.CommonConstant;
 import org.treeleaf.web.spring.resovler.ExceptionConverter;
@@ -29,8 +30,16 @@ public class DefaultExceptionConvert implements ExceptionConverter<Throwable> {
 
     @Override
     public Object convert(Throwable source) {
+
+        String retCode;
+        if (source instanceof RetCodeException) {
+            retCode = ((RetCodeException) source).getRetCode();
+        } else {
+            retCode = unkonwnErrorRetCode;
+        }
+
         String msg = StringUtils.defaultString(defaultErrorMsg, source.getMessage());
-        Json json = new Json(unkonwnErrorRetCode, msg);
+        Json json = new Json(retCode, msg);
         return json;
     }
 

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.treeleaf.common.safe.ThreeDesUtils;
+import org.treeleaf.common.safe.Des3;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -48,7 +48,7 @@ public class DecryptPropertyConfigurer extends PropertyPlaceholderConfigurer {
                 continue;
             }
             try {
-                value = ThreeDesUtils.decrypt(value, key);
+                value = Des3.decryptByBase64(value, key);
             } catch (Exception e) {
                 log.error("3desc解析配置文件失败,错误的值:{}", value, e);
                 throw new RuntimeException("3desc解析配置文件失败,错误的值:" + value, e);
