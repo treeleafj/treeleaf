@@ -43,7 +43,7 @@ public class FastJsonView extends AbstractView {
         }
 
         String json = JsonUtils.toJson(this.obj);
-        IOUtils.write(json, response.getOutputStream());
+        IOUtils.write(json, response.getOutputStream(), charset);
     }
 
     public String getCharset() {

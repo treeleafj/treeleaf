@@ -13,13 +13,19 @@ import java.net.URL;
 
 /**
  * Http get请求
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/6/29.
  */
 public class HttpGet extends Http {
 
     private static Logger log = LoggerFactory.getLogger(HttpGet.class);
 
+    /**
+     * get方式请求远程地址
+     *
+     * @return
+     * @throws org.treeleaf.common.http.HttpException
+     */
     public String get() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         get(out);
@@ -31,9 +37,10 @@ public class HttpGet extends Http {
     }
 
     /**
-     * 请求远程地址
+     * get方式请求远程地址
+     *
      * @return
-     * @throws com.icard.common.http.HttpException
+     * @throws org.treeleaf.common.http.HttpException
      */
     public void get(OutputStream out) {
 
@@ -41,7 +48,7 @@ public class HttpGet extends Http {
 
         //组装参数
         if (this.getParam() != null && !this.getParam().isEmpty()) {
-            address += ("?" + Http.param2String(this.getParam()));
+            address += ("?" + Http.param2UrlParam(this.getParam()));
         }
 
         HttpURLConnection conn = null;
@@ -70,7 +77,7 @@ public class HttpGet extends Http {
 
         } catch (Exception e) {
 
-            throw new HttpException("get方式请求远程地址失败", e);
+            throw new HttpException("get方式请求远程地址" + address + "失败", e);
 
         } finally {
 
@@ -85,10 +92,6 @@ public class HttpGet extends Http {
                 }
             }
         }
-    }
-
-    protected HttpURLConnection getHttpURLConnection(URL url) throws Exception {
-        return (HttpURLConnection) url.openConnection();
     }
 
 }

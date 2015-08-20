@@ -2,52 +2,50 @@ package org.treeleaf.common.http;
 
 import org.apache.commons.lang3.StringUtils;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 
 /**
  * Http请求父类
- *
+ * <p>
  * Created by yaoshuhong on 2015/6/29.
  */
-public abstract class Http {
+public class Http extends HttpConnectionAttr {
 
     public static final String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 
     public static final String CONTENT_TYPE_JSON = "application/json";
 
-    public static final String NAME_CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_TYPE_XML = "text/xml";
+
+    private static final String CHARSET = "UTF-8";
 
     /**
-     * 链接超时
+     * 根据是否采用ssl加密获取对应的HtppURLConnection实例
+     *
+     * @param url
+     * @return
+     * @throws Exception
      */
-    private int connectTimeout = 10000;
+    protected HttpURLConnection getHttpURLConnection(URL url) throws Exception {
+        if (this.isSsl()) {
+            SSLContext sc = SSLContext.getInstance("TLSv1.2");
+            sc.init(null, new TrustManager[]{new TrustAnyTrustManager()},
+                    new java.security.SecureRandom());
 
-    /**
-     * 读超时
-     */
-    private int readTimeout = 60000;
-
-    /**
-     * 请求编码
-     */
-    private String encoding = "UTF-8";
-
-    /**
-     * 访问地址
-     */
-    private String address;
-
-    /**
-     * 请求头部
-     */
-    private HttpHeader header = HttpHeaderBuilder.buildDefaultHttpHeader();
-
-    /**
-     * 请求参数
-     */
-    private Map<String, String> param;
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setSSLSocketFactory(sc.getSocketFactory());
+            conn.setHostnameVerifier(new TrustAnyHostnameVerifier());
+            return conn;
+        }
+        return (HttpURLConnection) url.openConnection();
+    }
 
     /**
      * 将map参数使用'&'符号链接起来
@@ -55,7 +53,7 @@ public abstract class Http {
      * @param param 参数
      * @return
      */
-    public static String param2String(Map<String, String> param) {
+    public static String param2UrlParam(Map<String, String> param) {
 
         if (param == null || param.isEmpty()) {
             return StringUtils.EMPTY;
@@ -70,7 +68,7 @@ public abstract class Http {
                 if (entry.getValue() != null) {
                     stringBuilder.append(entry.getKey());
                     stringBuilder.append(s1);
-                    stringBuilder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                    stringBuilder.append(URLEncoder.encode(entry.getValue(), CHARSET));
                     stringBuilder.append(s2);
                 }
             }
@@ -78,65 +76,12 @@ public abstract class Http {
             if (stringBuilder.length() > 0) {
                 stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             }
+
             return stringBuilder.toString();
+
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(String.format("参数中%s存在非法字符串,无法使用%s转义.", param.toString(), "UTF-8"), e);
+            throw new RuntimeException(String.format("参数中%s存在非法字符串,无法使用%s转义.", param.toString(), CHARSET), e);
         }
     }
 
-    public void addHeader(String name, String value) {
-        this.header.addHeader(name, value);
-    }
-
-    public String getHeader(String name) {
-        return this.getHeader().getHeader(name);
-    }
-
-    public void setHeader(HttpHeader header) {
-        this.header = header;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public HttpHeader getHeader() {
-        return header;
-    }
-
-    public Map<String, String> getParam() {
-        return param;
-    }
-
-    public void setParam(Map<String, String> param) {
-        this.param = param;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
-    public int getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
-    }
-
-    public int getReadTimeout() {
-        return readTimeout;
-    }
-
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
-    }
 }

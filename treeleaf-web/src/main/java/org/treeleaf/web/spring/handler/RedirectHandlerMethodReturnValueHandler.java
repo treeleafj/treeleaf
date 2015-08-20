@@ -8,7 +8,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.view.RedirectView;
-import org.treeleaf.common.http.HttpUtils;
+import org.treeleaf.common.http.Http;
 import org.treeleaf.web.Redirect;
 
 /**
@@ -33,7 +33,7 @@ public class RedirectHandlerMethodReturnValueHandler implements HandlerMethodRet
                                   NativeWebRequest webRequest) throws Exception {
 
         Redirect redirect = (Redirect) returnValue;
-        String param = HttpUtils.paramUrlEncode2String(redirect.getParam());
+        String param = Http.param2UrlParam(redirect.getParam());
         StringBuilder stringBuilder = new StringBuilder(redirect.getPath());
         if (StringUtils.isNotBlank(param)) {
             stringBuilder.append('?');

@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.treeleaf.common.exception.BaseException;
-import org.treeleaf.common.http.HttpUtils;
+import org.treeleaf.common.http.Http;
 import org.treeleaf.web.spring.CommonConstant;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class HtmlRedircetExceptionExtHandler  extends AbstractBaseExceptionExtHa
         }
 
 
-        String param = HttpUtils.paramUrlEncode2String(paramMap);
+        String param = Http.param2UrlParam(paramMap);
         StringBuilder stringBuilder = new StringBuilder(defaultErrorView);
         if (StringUtils.isNotBlank(param)) {
             stringBuilder.append('?');

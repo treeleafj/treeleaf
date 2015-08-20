@@ -9,7 +9,7 @@ import java.util.UUID;
  * <p/>
  * Created by yaoshuhong on 2015/5/7.
  */
-public class UUIDUtils {
+public class Uuid {
 
     /**
      * 生成普通32位UUID字符串
