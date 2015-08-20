@@ -1,5 +1,6 @@
 package org.treeleaf.cache;
 
+import org.treeleaf.cache.local.LocalCacheImpl;
 import org.treeleaf.cache.redis.RedisCacheImpl;
 
 /**
@@ -9,7 +10,9 @@ import org.treeleaf.cache.redis.RedisCacheImpl;
  */
 public class CacheFactory {
 
-    private static Cache cache = new RedisCacheImpl();
+    private static Cache redisCache = new RedisCacheImpl();
+
+    private static Cache localCache = new LocalCacheImpl();
 
     /**
      * 获取Cache对象
@@ -17,7 +20,12 @@ public class CacheFactory {
      * @return
      */
     public static Cache getCache() {
-        return cache;
+        switch (CacheConfig.getInstance().getType()) {
+            case 0 :
+                return redisCache;
+            default:
+                return localCache;
+        }
     }
 
 }

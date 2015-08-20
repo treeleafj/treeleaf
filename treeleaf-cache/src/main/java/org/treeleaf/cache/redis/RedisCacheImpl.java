@@ -20,19 +20,38 @@ import java.util.Map;
 public class RedisCacheImpl implements Cache {
 
     @Override
-    public void setObj(String key, Object object) throws CacheException {
-        String json = JsonUtils.toJson(object);
-        this.set(key, json);
+    public void set(String key, Object valud, int... expireSeconds) throws CacheException {
+        String v;
+        if (valud instanceof String) {
+            v = (String) valud;
+        } else {
+            v = JsonUtils.toJson(valud);
+        }
+
+        final String _key = key;
+        final String _value = v;
+
+        if (expireSeconds.length > 0) {
+            final int _expireSeconds = expireSeconds[0];
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    return jedis.setex(_key, _expireSeconds, _value);
+                }
+            });
+        } else {
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    return jedis.set(_key, _value);
+                }
+            });
+        }
+
     }
 
     @Override
-    public void setObj(String key, Object object, int expireSeconds) throws CacheException {
-        String json = JsonUtils.toJson(object);
-        this.set(key, json, expireSeconds);
-    }
-
-    @Override
-    public <T extends Object> T getObj(String key, Class<T> classz) throws CacheException {
+    public <T extends Object> T get(String key, Class<T> classz) throws CacheException {
         String json = this.get(key);
         if (StringUtils.isBlank(json)) {
             return null;
@@ -78,23 +97,17 @@ public class RedisCacheImpl implements Cache {
     }
 
     @Override
-    public void set(String key, String value) throws CacheException {
+    public void setByNoExists(String key, Object value) throws CacheException {
+
+        String v;
+        if (value instanceof String) {
+            v = (String) value;
+        } else {
+            v = JsonUtils.toJson(value);
+        }
 
         final String _key = key;
-        final String _value = value;
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.set(_key, _value);
-            }
-        });
-
-    }
-
-    @Override
-    public void setByNoExists(String key, String value) throws CacheException {
-        final String _key = key;
-        final String _value = value;
+        final String _value = v;
         this.handler(new JedisHandler() {
             @Override
             public Object handler(Jedis jedis) {
@@ -117,19 +130,6 @@ public class RedisCacheImpl implements Cache {
     }
 
     @Override
-    public void set(String key, String value, int expireSeconds) throws CacheException {
-        final String _key = key;
-        final String _value = value;
-        final int _expireSeconds = expireSeconds;
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.setex(_key, _expireSeconds, _value);
-            }
-        });
-    }
-
-    @Override
     public String get(String key) throws CacheException {
         final String _key = key;
         return this.handler(new JedisHandler() {
@@ -141,29 +141,28 @@ public class RedisCacheImpl implements Cache {
     }
 
     @Override
-    public void setMap(String key, Map<String, String> value) throws CacheException {
-        final String _key = key;
-        final Map<String, String> _value = value;
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.hmset(_key, _value);
-            }
-        });
-    }
+    public void setMap(String key, Map<String, String> value, int... expireSeconds) throws CacheException {
 
-    @Override
-    public void setMap(String key, Map<String, String> value, int expireSeconds) throws CacheException {
         final String _key = key;
         final Map<String, String> _value = value;
-        final int _expireSeconds = expireSeconds;
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                jedis.hmset(_key, _value);
-                return jedis.expire(_key, _expireSeconds);
-            }
-        });
+
+        if (expireSeconds.length > 0) {
+            final int _expireSeconds = expireSeconds[0];
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    jedis.hmset(_key, _value);
+                    return jedis.expire(_key, _expireSeconds);
+                }
+            });
+        } else {
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    return jedis.hmset(_key, _value);
+                }
+            });
+        }
     }
 
     @Override
@@ -203,102 +202,116 @@ public class RedisCacheImpl implements Cache {
     }
 
     @Override
-    public void setStringList(String key, List<String> value) throws CacheException {
+    public void setStringList(String key, List<String> value, int... expireSeconds) throws CacheException {
         final String _key = key;
         final String[] _values = value.toArray(new String[value.size()]);
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.rpush(_key, _values);
-            }
-        });
+
+        if (expireSeconds.length > 0) {
+            final int _expireSeconds = expireSeconds[0];
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    jedis.del(_key);
+                    jedis.rpush(_key, _values);
+                    return jedis.expire(_key, _expireSeconds);
+                }
+            });
+        } else {
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    jedis.del(_key);
+                    return jedis.rpush(_key, _values);
+                }
+            });
+        }
     }
 
     @Override
-    public <T extends Object> void setObjList(String key, List<T> value) throws CacheException {
+    public <T extends Object> void setList(String key, List<T> value, int... expireSeconds) throws CacheException {
         final String _key = key;
-        final String[] _values = objList2JsonStringList(value);
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                jedis.del(_key);
-                return jedis.rpush(_key, _values);
-            }
-        });
-    }
 
-    @Override
-    public void setStringList(String key, List<String> value, int expireSeconds) throws CacheException {
-        final String _key = key;
-        final int _expireSeconds = expireSeconds;
-        final String[] _values = value.toArray(new String[value.size()]);
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                jedis.del(_key);
-                jedis.rpush(_key, _values);
-                return jedis.expire(_key, _expireSeconds);
+        Iterator<T> iterator = value.iterator();
+        String[] array = new String[value.size()];
+        int i = 0;
+        while (iterator.hasNext()) {
+            T next = iterator.next();
+            if (next instanceof String) {
+                array[i] = (String) next;
+            } else {
+                array[i] = JsonUtils.toJson(next);
             }
-        });
-    }
-
-    @Override
-    public <T extends Object> void setObjList(String key, List<T> value, int expireSeconds) throws CacheException {
-        final String _key = key;
-        final String[] _values = objList2JsonStringList(value);
-        final int _expireSeconds = expireSeconds;
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                jedis.del(_key);
-                jedis.rpush(_key, _values);
-                return jedis.expire(_key, _expireSeconds);
-            }
-        });
-    }
-
-    @Override
-    public List<String> getStringList(String key) throws CacheException {
-        final String _key = key;
-        return this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.lrange(_key, 0, -1);
-            }
-        });
-    }
-
-    @Override
-    public <T> List<T> getObjList(String key, Class<T> classz) throws CacheException {
-        final String _key = key;
-        List<String> stringValues = this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.lrange(_key, 0, -1);
-            }
-        });
-
-        List<T> objs = new ArrayList<T>(stringValues.size());
-
-        String json = null;
-        try {
-            Iterator<String> iterator = stringValues.iterator();
-            while (iterator.hasNext()) {
-                json = iterator.next();
-                T obj = JsonUtils.parseObject(json, classz);
-                objs.add(obj);
-            }
-        } catch (Exception e) {
-            throw new CacheException("将缓存中的数据[" + json + "]转换为" + classz.getName() + "异常", e);
+            i++;
         }
 
-        return objs;
+        final String[] _values = array;
+
+        if (expireSeconds.length > 0) {
+            final int _expireSeconds = expireSeconds[0];
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    jedis.del(_key);
+                    jedis.rpush(_key, _values);
+                    return jedis.expire(_key, _expireSeconds);
+                }
+            });
+        } else {
+            this.handler(new JedisHandler() {
+                @Override
+                public Object handler(Jedis jedis) {
+                    jedis.del(_key);
+                    return jedis.rpush(_key, _values);
+                }
+            });
+        }
     }
 
     @Override
-    public void pushQueueStringValue(String key, String value) throws CacheException {
+    public <T> List<T> getList(String key, Class<T>... classz) throws CacheException {
         final String _key = key;
-        final String _value = value;
+
+        List stringValues = this.handler(new JedisHandler() {
+            @Override
+            public Object handler(Jedis jedis) {
+                return jedis.lrange(_key, 0, -1);
+            }
+        });
+
+        if (classz.length <= 0) {
+            return stringValues;
+        } else {
+
+            List<T> objs = new ArrayList<T>(stringValues.size());
+
+            String json = null;
+            try {
+                Iterator<String> iterator = stringValues.iterator();
+                while (iterator.hasNext()) {
+                    json = iterator.next();
+                    T obj = JsonUtils.parseObject(json, classz[0]);
+                    objs.add(obj);
+                }
+            } catch (Exception e) {
+                throw new CacheException("将缓存中的数据[" + json + "]转换为" + classz[0].getName() + "异常", e);
+            }
+
+            return objs;
+        }
+
+    }
+
+    @Override
+    public void pushQueue(String key, Object value) throws CacheException {
+        String v;
+        if (value instanceof String) {
+            v = (String) value;
+        } else {
+            v = JsonUtils.toJson(value);
+        }
+
+        final String _key = key;
+        final String _value = v;
         this.handler(new JedisHandler() {
             @Override
             public Object handler(Jedis jedis) {
@@ -308,47 +321,28 @@ public class RedisCacheImpl implements Cache {
     }
 
     @Override
-    public void pushQueueObjValue(String key, Object value) throws CacheException {
-        final String _key = key;
-        final String _value = JsonUtils.toJson(value);
-        this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.rpush(_key, _value);
-            }
-        });
-    }
-
-    @Override
-    public String popQueueStringValue(String key) throws CacheException {
-        final String _key = key;
-        return this.handler(new JedisHandler() {
-            @Override
-            public Object handler(Jedis jedis) {
-                return jedis.lpop(_key);
-            }
-        });
-    }
-
-    @Override
-    public <T> T popQueueObjValue(String key, Class<T> classz) throws CacheException {
+    public <T> T popQueue(String key, Class<T>... classz) throws CacheException {
 
         final String _key = key;
-        String json = this.handler(new JedisHandler() {
+        String r = this.handler(new JedisHandler() {
             @Override
             public Object handler(Jedis jedis) {
                 return jedis.lpop(_key);
             }
         });
 
-        if (StringUtils.isBlank(json)) {
+        if (classz.length <= 0) {
+            return (T) r;
+        }
+
+        if (StringUtils.isBlank(r)) {
             return null;
         }
 
         try {
-            return JsonUtils.parseObject(json, classz);
+            return JsonUtils.parseObject(r, classz[0]);
         } catch (Exception e) {
-            throw new CacheException("将缓存中的数据[" + json + "]转换为" + classz.getName() + "异常", e);
+            throw new CacheException("将缓存中的数据[" + r + "]转换为" + classz[0].getName() + "异常", e);
         }
     }
 
@@ -407,23 +401,6 @@ public class RedisCacheImpl implements Cache {
         } finally {
             returnResourceObject(pool, jedis);
         }
-    }
-
-    /**
-     * 将List<Object>转为List<String>
-     *
-     * @param list
-     * @return
-     */
-    private String[] objList2JsonStringList(List list) {
-        Iterator<Object> iterator = list.iterator();
-        String[] _values = new String[list.size()];
-        int i = 0;
-        while (iterator.hasNext()) {
-            _values[i] = JsonUtils.toJson(iterator.next());
-            i++;
-        }
-        return _values;
     }
 
 }

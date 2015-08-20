@@ -13,25 +13,23 @@ import java.util.Map;
 public interface Cache {
 
     /**
-     * 将数据永久缓存
-     * <p/>
-     * 若存在相同key的数据,则会覆盖
-     *
-     * @param key    缓存中的key
-     * @param object 缓存的数据
-     */
-    void setObj(String key, Object object) throws CacheException;
-
-    /**
-     * 将数据缓存,并设定超时时间(秒为单位)
+     * 将数据永久缓存,并设定超时时间(秒为单位)
      * <p/>
      * 若存在相同key的数据,则会覆盖
      *
      * @param key           缓存中的key
      * @param object        缓存的数据
-     * @param expireSeconds 多少秒后超时
+     * @param expireSeconds 多少秒后超时,只能填一个
      */
-    void setObj(String key, Object object, int expireSeconds) throws CacheException;
+    void set(String key, Object object, int... expireSeconds) throws CacheException;
+
+    /**
+     * 获取指定key里的缓存数据
+     *
+     * @param key 缓存中的key
+     * @return null或者缓存中的数据
+     */
+    String get(String key) throws CacheException;
 
     /**
      * 获取指定key里的缓存数据
@@ -40,7 +38,7 @@ public interface Cache {
      * @param key 缓存中的key
      * @return null或者缓存中的数据
      */
-    <T> T getObj(String key, Class<T> classz) throws CacheException;
+    <T> T get(String key, Class<T> classz) throws CacheException;
 
     /**
      * 删除指定key的数据
@@ -68,69 +66,32 @@ public interface Cache {
     boolean exists(String key) throws CacheException;
 
     /**
-     * 将字符串数据永久缓存
-     * <p/>
-     * 若存在相同key的数据,则会覆盖
-     *
-     * @param key   缓存中的key
-     * @param value 缓存的数据
-     */
-    void set(String key, String value) throws CacheException;
-
-    /**
      * 将字符串数据永久缓存, 仅当key对应的数据不存在时
      *
      * @param key
      * @param value
      * @throws CacheException
      */
-    void setByNoExists(String key, String value) throws CacheException;
+    void setByNoExists(String key, Object value) throws CacheException;
 
     /**
      * 设置缓存中map里的指定值,仅当map中的file不存在时才有效
      *
-     * @param key 缓存中的key
+     * @param key      缓存中的key
      * @param entryKey
-     * @param value 要设置的值
+     * @param value    要设置的值
      * @throws CacheException
      */
     void setMapValueByNoExists(String key, String entryKey, String value) throws CacheException;
 
     /**
-     * 将字符串数据数据缓存,并设定超时时间(秒为单位)
-     * <p/>
-     * 若存在相同key的数据,则会覆盖
-     *
-     * @param key           缓存中的key
-     * @param value         缓存的数据
-     * @param expireSeconds 多少秒后超时
-     */
-    void set(String key, String value, int expireSeconds) throws CacheException;
-
-    /**
-     * 获取指定key里的缓存数据
-     *
-     * @param key 缓存中的key
-     * @return null或者缓存中的数据
-     */
-    String get(String key) throws CacheException;
-
-    /**
-     * 将Map数据永久缓存
-     *
-     * @param key   缓存中的key
-     * @param value 缓存的Map数据
-     */
-    void setMap(String key, Map<String, String> value) throws CacheException;
-
-    /**
-     * 将Map数据永久缓存
+     * 将Map数据永久缓存,并设定超时时间(秒为单位)
      *
      * @param key           缓存中的key
      * @param value         缓存的Map数据
-     * @param expireSeconds 多少秒后超时
+     * @param expireSeconds 多少秒后超时,只能填一个
      */
-    void setMap(String key, Map<String, String> value, int expireSeconds) throws CacheException;
+    void setMap(String key, Map<String, String> value, int... expireSeconds) throws CacheException;
 
     /**
      * 获取指定key里的缓存Map数据
@@ -158,46 +119,26 @@ public interface Cache {
     String getMapValue(String key, String entryKey) throws CacheException;
 
     /**
-     * 将列表数据永久缓存
+     * 将列表数据永久缓存,并设定超时时间(秒为单位)
      * <p/>
      * 若存在相同key的数据,则会覆盖
      *
-     * @param key   缓存中的key
-     * @param value 要缓存的列表
+     * @param key           缓存中的key
+     * @param value         要缓存的列表
+     * @param expireSeconds 超时时间,只能填一个
      */
-    void setStringList(String key, List<String> value) throws CacheException;
-
-    /**
-     * 将列表数据永久缓存
-     * <p/>
-     * 若存在相同key的数据,则会覆盖
-     *
-     * @param key   缓存中的key
-     * @param value 要缓存的列表
-     */
-    <T extends Object> void setObjList(String key, List<T> value) throws CacheException;
+    void setStringList(String key, List<String> value, int... expireSeconds) throws CacheException;
 
     /**
      * 将列表数据永久缓存,并设定超时时间(秒为单位)
      * <p/>
      * 若存在相同key的数据,则会覆盖
      *
-     * @param key
-     * @param value
-     * @param expireSeconds
+     * @param key   缓存中的key
+     * @param value 要缓存的列表
+     * @param expireSeconds 超时时间,只能填一个
      */
-    void setStringList(String key, List<String> value, int expireSeconds) throws CacheException;
-
-    /**
-     * 将列表数据永久缓存,并设定超时时间(秒为单位)
-     * <p/>
-     * 若存在相同key的数据,则会覆盖
-     *
-     * @param key
-     * @param value
-     * @param expireSeconds
-     */
-    <T extends Object> void setObjList(String key, List<T> value, int expireSeconds) throws CacheException;
+    <T extends Object> void setList(String key, List<T> value, int... expireSeconds) throws CacheException;
 
     /**
      * 获取指定key里的列表缓存数据
@@ -205,15 +146,7 @@ public interface Cache {
      * @param key 缓存中的key
      * @return
      */
-    List<String> getStringList(String key) throws CacheException;
-
-    /**
-     * 获取指定key里的列表缓存数据
-     *
-     * @param key 缓存中的key
-     * @return
-     */
-    <T> List<T> getObjList(String key, Class<T> classz) throws CacheException;
+    <T> List<T> getList(String key, Class<T>... classz) throws CacheException;
 
     /**
      * 往缓存中的队列尾部放值
@@ -221,23 +154,7 @@ public interface Cache {
      * @param key   缓存中的key
      * @param value 要放到队列的数据
      */
-    void pushQueueStringValue(String key, String value) throws CacheException;
-
-    /**
-     * 往缓存中的队列尾部放值
-     *
-     * @param key   缓存中的key
-     * @param value 要放到队列的数据
-     */
-    void pushQueueObjValue(String key, Object value) throws CacheException;
-
-    /**
-     * 获取并移除缓存队列的字符串列头
-     *
-     * @param key 缓存中的key
-     * @return
-     */
-    String popQueueStringValue(String key) throws CacheException;
+    void pushQueue(String key, Object value) throws CacheException;
 
     /**
      * 获取并移除缓存队列的列头
@@ -246,7 +163,7 @@ public interface Cache {
      * @param classz Object的实际对象
      * @return
      */
-    <T> T popQueueObjValue(String key, Class<T> classz) throws CacheException;
+    <T> T popQueue(String key, Class<T>... classz) throws CacheException;
 
     /**
      * 将 key 所存储的值加上增量 num,若key不存在,则初始化为num

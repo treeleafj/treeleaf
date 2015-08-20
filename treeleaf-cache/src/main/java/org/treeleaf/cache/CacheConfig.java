@@ -3,8 +3,6 @@ package org.treeleaf.cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 /**
  * 缓存配置
  * <p/>
@@ -44,21 +42,18 @@ public class CacheConfig {
      */
     private int maxIdle = 8;
 
+    /**
+     * 默认采用的cache实现, 0为redis, 1为本地内存
+     */
+    private int type = 0;
+
     private static CacheConfig cacheConfig;
 
     /**
      * 初始化方法
      */
     public synchronized void init() {
-
-        cacheConfig = new CacheConfig();
-
-        cacheConfig.setMaxIdle(this.getMaxIdle());
-        cacheConfig.setMaxTotal(this.getMaxTotal());
-        cacheConfig.setHost(this.getHost());
-        cacheConfig.setPort(this.getPort());
-        cacheConfig.setPassword(this.getPassword());
-        cacheConfig.setMaxWaitmillis(this.getMaxWaitmillis());
+        cacheConfig = this;
     }
 
     public static CacheConfig getInstance() {
@@ -119,4 +114,11 @@ public class CacheConfig {
         this.maxIdle = maxIdle;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 }
