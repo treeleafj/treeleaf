@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public class Http extends HttpConnectionAttr {
 
+    public static final String NAME_CONTENT_TYPE = "Content-Type";
+
     public static final String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 
     public static final String CONTENT_TYPE_JSON = "application/json";
