@@ -10,7 +10,7 @@ public class ServiceException extends RuntimeException implements BaseException,
     /**
      * 错误码
      */
-    private String retCode;
+    private String retCode = "999998";
 
     public ServiceException(String message) {
         super(message);
