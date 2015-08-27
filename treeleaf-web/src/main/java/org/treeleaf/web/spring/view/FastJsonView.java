@@ -2,7 +2,7 @@ package org.treeleaf.web.spring.view;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.web.servlet.view.AbstractView;
-import org.treeleaf.common.json.JsonUtils;
+import org.treeleaf.common.json.Jsoner;
 import org.treeleaf.web.spring.CommonConstant;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ public class FastJsonView extends AbstractView {
             this.obj = model;
         }
 
-        String json = JsonUtils.toJson(this.obj);
+        String json = Jsoner.toJson(this.obj);
         IOUtils.write(json, response.getOutputStream(), charset);
     }
 

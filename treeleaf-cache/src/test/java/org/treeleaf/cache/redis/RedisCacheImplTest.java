@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.treeleaf.cache.Cache;
 import org.treeleaf.cache.CacheConfig;
 import org.treeleaf.cache.CacheFactory;
-import org.treeleaf.common.json.JsonUtils;
+import org.treeleaf.common.json.Jsoner;
 
 public class RedisCacheImplTest {
 
@@ -44,10 +44,10 @@ public class RedisCacheImplTest {
 
     @Test
     public void testPopQueueValue() throws Exception {
-        System.out.println(JsonUtils.toJson(cache.popQueue("q1")));
-        System.out.println(JsonUtils.toJson(cache.popQueue("q1")));
-        System.out.println(JsonUtils.toJson(cache.popQueue("q1", User.class)));
-        System.out.println(JsonUtils.toJson(cache.popQueue("q1", User.class)));
+        System.out.println(Jsoner.toJson(cache.popQueue("q1")));
+        System.out.println(Jsoner.toJson(cache.popQueue("q1")));
+        System.out.println(Jsoner.toJson(cache.popQueue("q1", User.class)));
+        System.out.println(Jsoner.toJson(cache.popQueue("q1", User.class)));
     }
 
 

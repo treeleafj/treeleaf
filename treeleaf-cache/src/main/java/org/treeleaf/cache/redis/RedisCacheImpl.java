@@ -3,7 +3,7 @@ package org.treeleaf.cache.redis;
 import org.apache.commons.lang3.StringUtils;
 import org.treeleaf.cache.Cache;
 import org.treeleaf.cache.CacheException;
-import org.treeleaf.common.json.JsonUtils;
+import org.treeleaf.common.json.Jsoner;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -25,7 +25,7 @@ public class RedisCacheImpl implements Cache {
         if (valud instanceof String) {
             v = (String) valud;
         } else {
-            v = JsonUtils.toJson(valud);
+            v = Jsoner.toJson(valud);
         }
 
         String _key = key;
@@ -46,7 +46,7 @@ public class RedisCacheImpl implements Cache {
         if (StringUtils.isBlank(json)) {
             return null;
         }
-        return JsonUtils.parseObject(json, classz);
+        return Jsoner.toObj(json, classz);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class RedisCacheImpl implements Cache {
         if (value instanceof String) {
             v = (String) value;
         } else {
-            v = JsonUtils.toJson(value);
+            v = Jsoner.toJson(value);
         }
 
         String _key = key;
@@ -171,7 +171,7 @@ public class RedisCacheImpl implements Cache {
             if (next instanceof String) {
                 array[i] = (String) next;
             } else {
-                array[i] = JsonUtils.toJson(next);
+                array[i] = Jsoner.toJson(next);
             }
             i++;
         }
@@ -210,7 +210,7 @@ public class RedisCacheImpl implements Cache {
                 Iterator<String> iterator = stringValues.iterator();
                 while (iterator.hasNext()) {
                     json = iterator.next();
-                    T obj = JsonUtils.parseObject(json, classz[0]);
+                    T obj = Jsoner.toObj(json, classz[0]);
                     objs.add(obj);
                 }
             } catch (Exception e) {
@@ -228,7 +228,7 @@ public class RedisCacheImpl implements Cache {
         if (value instanceof String) {
             v = (String) value;
         } else {
-            v = JsonUtils.toJson(value);
+            v = Jsoner.toJson(value);
         }
 
         String _key = key;
@@ -251,7 +251,7 @@ public class RedisCacheImpl implements Cache {
         }
 
         try {
-            return JsonUtils.parseObject(r, classz[0]);
+            return Jsoner.toObj(r, classz[0]);
         } catch (Exception e) {
             throw new CacheException("将缓存中的数据[" + r + "]转换为" + classz[0].getName() + "异常", e);
         }

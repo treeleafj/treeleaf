@@ -6,7 +6,7 @@ import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.treeleaf.common.json.JsonUtils;
+import org.treeleaf.common.json.Jsoner;
 import org.treeleaf.web.Json;
 import org.treeleaf.web.spring.CommonConstant;
 
@@ -40,7 +40,7 @@ public class JsonHttpMessageConverter extends AbstractHttpMessageConverter<Json>
     protected void writeInternal(Json t, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         //处理@ResponseBody,转为json输出给前台
-        String json = JsonUtils.toJson(t);
+        String json = Jsoner.toJson(t);
         IOUtils.write(json, outputMessage.getBody(), charset);
     }
 

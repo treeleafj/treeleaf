@@ -5,24 +5,28 @@ package org.treeleaf.common.exception;
  * <p/>
  * Created by yaoshuhong on 2015/7/13.
  */
-public class ServiceException extends RuntimeException implements BaseException, RetCodeException {
+public class ServiceException extends RuntimeException implements BaseException, RetCodeSupport {
 
     /**
      * 错误码
      */
-    private String retCode = "999998";
+    private String retCode = RetCode.FAIL_LOGIC;
 
     public ServiceException(String message) {
         super(message);
     }
 
     public ServiceException(String retCode, String message) {
-        super(message);
+        this(message);
         this.retCode = retCode;
     }
 
-    public ServiceException(String retCode, String message, Throwable throwable) {
+    public ServiceException(String message, Throwable throwable) {
         super(message, throwable);
+    }
+
+    public ServiceException(String retCode, String message, Throwable throwable) {
+        this(message, throwable);
         this.retCode = retCode;
     }
 
