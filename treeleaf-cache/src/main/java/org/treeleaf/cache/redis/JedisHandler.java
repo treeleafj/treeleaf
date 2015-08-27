@@ -9,6 +9,6 @@ import redis.clients.jedis.Jedis;
  */
 public interface JedisHandler {
 
-    <T> T handler(Jedis jedis);
+    Object handler(Jedis jedis);
 
 }
