@@ -13,7 +13,7 @@ import org.treeleaf.web.Redirect;
 
 /**
  * 处理Controller返回Redirect的结果, 底层采用response.sendRedirect的方式处理
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/4/29.
  *
  * @see org.treeleaf.web.Redirect

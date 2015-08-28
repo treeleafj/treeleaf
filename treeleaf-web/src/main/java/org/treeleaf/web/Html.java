@@ -2,7 +2,7 @@ package org.treeleaf.web;
 
 /**
  * 返回html页面的结果
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/4/29.
  */
 public class Html implements Result {

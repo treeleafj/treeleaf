@@ -15,7 +15,7 @@ import java.util.Properties;
 
 /**
  * 解密配置文件,主要用于对采用了3desc加密方式的配置文件进行解密读取
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/5/6.
  */
 public class DecryptPropertyConfigurer extends PropertyPlaceholderConfigurer {

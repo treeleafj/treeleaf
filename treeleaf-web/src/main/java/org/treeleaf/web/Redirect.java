@@ -5,10 +5,10 @@ import java.util.Map;
 
 /**
  * 返回让前台跳转的结果(response.sendRedirect)
- *
+ * <p>
  * Created by yaoshuhong on 2015/5/30.
  */
-public class Redirect implements Result{
+public class Redirect implements Result {
 
     /**
      * 跳转地址
@@ -28,7 +28,7 @@ public class Redirect implements Result{
     }
 
     /**
-     * @param path 要跳转的路径
+     * @param path  要跳转的路径
      * @param param 地址上的参数,对于web会自动组成?a=1&b=2&c=3这样的方式
      */
     public Redirect(String path, Map<String, String> param) {

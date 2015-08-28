@@ -28,6 +28,7 @@ public class TextView extends AbstractView {
     protected void renderMergedOutputModel(Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(text.getContentType() + ";charset=" + this.text.getCharset());
         response.setCharacterEncoding(this.text.getCharset());
-        IOUtils.write(this.text.getContent(), response.getOutputStream());
+        String content = this.text.getContent();
+        IOUtils.write(content, response.getOutputStream(), this.text.getCharset());
     }
 }

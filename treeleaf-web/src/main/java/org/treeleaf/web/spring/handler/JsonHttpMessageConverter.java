@@ -8,7 +8,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.treeleaf.common.json.Jsoner;
 import org.treeleaf.web.Json;
-import org.treeleaf.web.spring.CommonConstant;
 
 import java.io.IOException;
 
@@ -22,7 +21,7 @@ import java.io.IOException;
  */
 public class JsonHttpMessageConverter extends AbstractHttpMessageConverter<Json> {
 
-    private String charset = CommonConstant.DEFAULT_CHARSET;
+    private String charset = "utf-8";
 
     @Override
     protected boolean supports(Class<?> clazz) {
@@ -42,14 +41,6 @@ public class JsonHttpMessageConverter extends AbstractHttpMessageConverter<Json>
         //处理@ResponseBody,转为json输出给前台
         String json = Jsoner.toJson(t);
         IOUtils.write(json, outputMessage.getBody(), charset);
-    }
-
-    public String getCharset() {
-        return charset;
-    }
-
-    public void setCharset(String charset) {
-        this.charset = charset;
     }
 
 }

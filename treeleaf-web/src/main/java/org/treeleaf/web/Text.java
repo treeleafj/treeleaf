@@ -17,9 +17,14 @@ public class Text implements Result {
     public final static String CONTENT_TYPE_TEXT = "text/plain";
 
     /**
+     * 返回json格式
+     */
+    public final static String CONTENT_TYPE_JSON = "application/json";
+
+    /**
      * 字符集,默认UTF-8
      */
-    private String charset;
+    private String charset = "utf-8";
 
     /**
      * HTTP协议内容类型
@@ -31,18 +36,17 @@ public class Text implements Result {
      */
     private String content;
 
+    public Text() {
+        this(null);
+    }
+
     public Text(String content) {
         this(CONTENT_TYPE_TEXT, content);
     }
 
     public Text(String contentType, String content) {
-        this(contentType, content, "utf-8");
-    }
-
-    public Text(String contentType, String content, String charset) {
         this.contentType = contentType;
         this.content = content;
-        this.charset = charset;
     }
 
     public String getContentType() {
