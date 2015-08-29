@@ -38,26 +38,42 @@
 
     </dependencies>
 
-    <!--&lt;!&ndash; 设置为开源中国maven加速访问 &ndash;&gt;-->
-    <!--<repositories>-->
-        <!--&lt;!&ndash; 开源中国maven主库 &ndash;&gt;-->
-        <!--<repository>-->
-            <!--<id>central</id>-->
-            <!--<name>OSChina Repository</name>-->
-            <!--<url>http://maven.oschina.net/content/groups/public/</url>-->
-            <!--<releases>-->
-                <!--<enabled>true</enabled>-->
-            <!--</releases>-->
-        <!--</repository>-->
-        <!--&lt;!&ndash; 可以加载开源中国maven库中的开户库 &ndash;&gt;-->
-        <!--<repository>-->
-            <!--<id>thirdparty</id>-->
-            <!--<name>OSChina Repository</name>-->
-            <!--<url>http://maven.oschina.net/content/repositories/thirdparty/</url>-->
-            <!--<releases>-->
-                <!--<enabled>true</enabled>-->
-            <!--</releases>-->
-        <!--</repository>-->
-    <!--</repositories>-->
+    <build>
+        <plugins>
+            <!-- 编译插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <!-- &lt;!&ndash; 设置为开源中国maven加速访问 &ndash;&gt;
+     <repositories>
+         &lt;!&ndash; 开源中国maven主库 &ndash;&gt;
+         <repository>
+             <id>central</id>
+             <name>OSChina Repository</name>
+             <url>http://maven.oschina.net/content/groups/public/</url>
+             <releases>
+                 <enabled>true</enabled>
+             </releases>
+         </repository>
+         &lt;!&ndash; 可以加载开源中国maven库中的开户库 &ndash;&gt;
+         <repository>
+             <id>thirdparty</id>
+             <name>OSChina Repository</name>
+             <url>http://maven.oschina.net/content/repositories/thirdparty/</url>
+             <releases>
+                 <enabled>true</enabled>
+             </releases>
+         </repository>
+     </repositories>-->
 
 </project>
