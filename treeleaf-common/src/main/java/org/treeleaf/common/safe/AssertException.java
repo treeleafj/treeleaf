@@ -1,23 +1,24 @@
 package org.treeleaf.common.safe;
 
 import org.treeleaf.common.exception.BaseException;
+import org.treeleaf.common.exception.RetCode;
 
 /**
  * @Author leaf
  * 2015/6/26 0026 0:36.
  */
-public class AssertException extends RuntimeException implements BaseException{
+public class AssertException extends RuntimeException implements BaseException {
+
+    private String retCode = RetCode.FAIL_PARAM;
 
     private String message;
-
-    private String retCode;
 
     public AssertException(String message) {
         super(message);
         this.message = message;
     }
 
-    public AssertException(String retCode, String message){
+    public AssertException(String retCode, String message) {
         super(message);
         this.retCode = retCode;
         this.message = message;

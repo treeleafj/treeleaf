@@ -62,6 +62,7 @@ public class HttpGet extends Http {
 
             conn.setConnectTimeout(this.getConnectTimeout());
             conn.setReadTimeout(this.getReadTimeout());
+            conn.setRequestMethod("GET");
 
             // 设置的请求属性
             for (String name : this.getHeader()) {
