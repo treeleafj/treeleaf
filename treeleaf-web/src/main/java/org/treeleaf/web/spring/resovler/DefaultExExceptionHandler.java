@@ -46,6 +46,8 @@ public class DefaultExExceptionHandler implements ExExceptionHanlder {
 
             if (errorInfo.getException() instanceof RetCodeSupport) {
                 param.put("retCode", ((RetCodeSupport) errorInfo.getException()).getRetCode());
+            } else {
+                param.put("retCode", RetCode.FAIL_UNKNOWN);
             }
 
             if (redirect) {
@@ -58,4 +60,15 @@ public class DefaultExExceptionHandler implements ExExceptionHanlder {
         }
     }
 
+    public void setTip(String tip) {
+        this.tip = tip;
+    }
+
+    public void setErrorView(String errorView) {
+        this.errorView = errorView;
+    }
+
+    public void setRedirect(boolean redirect) {
+        this.redirect = redirect;
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.treeleaf.common.exception.BaseException;
+import org.treeleaf.common.exception.RetCodeSupport;
 import org.treeleaf.web.spring.CommonConstant;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +56,7 @@ public class PrintLogHandlerInerceptor implements HandlerInterceptor {
 
             HandlerMethod hm = (HandlerMethod) handler;
             String className = hm.getBean().getClass().getSimpleName();
-            log.info("开始调用[{}][{}.{}]接口, 传入参数:{}", request.getRequestURI(), className, hm.getMethod().getName(), sb);
+            log.info("开始调用[{}][{}.{}]接口, 传入参数:{}", request.getServletPath(), className, hm.getMethod().getName(), sb);
         }
 
         return true;
@@ -76,20 +77,27 @@ public class PrintLogHandlerInerceptor implements HandlerInterceptor {
             long ms = System.currentTimeMillis() - t;
 
             e = (e != null ? e : (Exception) request.getAttribute(CommonConstant.ATTR_CACHE_EXCEPTION));
-            String msg = String.format("结束调用[{}][{}.{}]接口! 用时: {} 毫秒!", request.getRequestURI(), classSimpleName, hm.getMethod().getName(), ms);
+            String msg = String.format("结束调用[%s][%s]接口! 用时: %s 毫秒!", request.getRequestURI(), classSimpleName + "." + hm.getMethod().getName(), ms);
 
             if (e != null) {
                 if (e instanceof BaseException && e.getCause() == null) {
-                    msg += String.format(" 出现错误:[%s]", e.getMessage());
+                    if (e instanceof RetCodeSupport) {
+                        msg += String.format(" 出现错误:[%s][%s]", ((RetCodeSupport) e).getRetCode(), e.getMessage());
+                    } else {
+                        msg += String.format(" 出现错误:[%s]", e.getMessage());
+                    }
                     log.info(msg);
                 } else {
                     msg += " 出现异常:";
                     log.error(msg, e);
                 }
-            } else if (accessLog){
+            } else if (accessLog) {
                 log.info(msg);
             }
         }
     }
 
+    public void setAccessLog(boolean accessLog) {
+        this.accessLog = accessLog;
+    }
 }

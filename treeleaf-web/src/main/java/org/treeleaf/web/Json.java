@@ -72,7 +72,7 @@ public class Json extends Text {
                 log.error("将Json.data转map失败", e);
                 throw new RuntimeException(e);
             }
-            map.remove("classes");
+            map.remove("class");
         } else {
             map = new HashMap<>();
         }
