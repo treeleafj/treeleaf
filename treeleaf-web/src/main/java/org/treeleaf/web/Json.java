@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.treeleaf.common.exception.RetCode;
 import org.treeleaf.common.json.Jsoner;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,13 +68,22 @@ public class Json extends Text {
         Map map;
 
         if (this.data != null) {
-            try {
-                map = PropertyUtils.describe(this.data);
-            } catch (Exception e) {
-                log.error("将Json.data转map失败", e);
-                throw new RuntimeException(e);
+
+            if (this.data instanceof Map) {
+                map = (Map) this.data;
+            } else if (this.data instanceof Collection || this.data.getClass().isArray()) {
+                map = new HashMap<>();
+                map.put("array", this.data);
+            } else {
+                try {
+                    map = PropertyUtils.describe(this.data);
+                    map.remove("class");
+                } catch (Exception e) {
+                    log.error("将Json.data转map失败", e);
+                    throw new RuntimeException(e);
+                }
             }
-            map.remove("class");
+
         } else {
             map = new HashMap<>();
         }
