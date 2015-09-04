@@ -13,6 +13,10 @@ import org.treeleaf.web.ClientInfo;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 客户端信息处理
+ * <p>
+ * 专门处理方法入参上的ClientInfo类型的构建
+ *
  * @Author leaf
  * 2015/9/4 0004 18:52.
  */
@@ -30,7 +34,6 @@ public class ClientInfoHandlerMethodArgumentResolver implements HandlerMethodArg
         String ip = nativeWebRequest.getHeader("X-Real-IP");
         if (StringUtils.isBlank(ip)) {
             HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
-            log.info("request:{},{}", request, nativeWebRequest.getNativeRequest());
             if (request != null) {
                 ip = request.getRemoteAddr();
             }

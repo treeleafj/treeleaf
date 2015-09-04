@@ -5,7 +5,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.treeleaf.web.ParamMap;
+import org.treeleaf.web.Param;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,11 +17,11 @@ import java.util.Map;
  * @Author leaf
  * 2015/9/4 0004 13:17.
  */
-public class ParamMapHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class ParamHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
-        return methodParameter.getParameterType().equals(ParamMap.class);
+        return methodParameter.getParameterType().equals(Param.class);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class ParamMapHandlerMethodArgumentResolver implements HandlerMethodArgum
             String name = parameterNames.next();
             param.put(name, nativeWebRequest.getParameter(name));
         }
-        return new ParamMap(param);
+        return new Param(param);
     }
 }
