@@ -17,6 +17,11 @@ public class Text implements Result {
     public final static String CONTENT_TYPE_TEXT = "text/plain";
 
     /**
+     * 返回xml格式
+     */
+    public final static String CONTENT_TYPE_XML = "text/xml";
+
+    /**
      * 返回json格式
      */
     public final static String CONTENT_TYPE_JSON = "application/json";
