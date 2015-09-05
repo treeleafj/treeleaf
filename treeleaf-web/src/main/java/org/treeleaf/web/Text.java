@@ -27,6 +27,12 @@ public class Text implements Result {
     public final static String CONTENT_TYPE_JSON = "application/json";
 
     /**
+     * 返回javacript格式
+     */
+    public final static String CONTENT_TYPE_JAVASCRIPT = "application/javascript";
+
+
+    /**
      * 字符集,默认UTF-8
      */
     private String charset = "utf-8";
@@ -41,14 +47,28 @@ public class Text implements Result {
      */
     private String content;
 
+    /**
+     * 啥都不返回
+     */
     public Text() {
         this(null);
     }
 
+    /**
+     * 返回纯文本格式的content内容
+     *
+     * @param content
+     */
     public Text(String content) {
         this(CONTENT_TYPE_TEXT, content);
     }
 
+    /**
+     * 返回指定的contentType协议的content内容
+     *
+     * @param contentType
+     * @param content
+     */
     public Text(String contentType, String content) {
         this.contentType = contentType;
         this.content = content;
