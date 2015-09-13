@@ -1,18 +1,15 @@
 package org.treeleaf.common.safe;
 
-import org.apache.commons.codec.binary.Base64;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 /**
  * 3Des加解密工具
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/7/7.
  */
 public abstract class Des3 {
@@ -31,8 +28,8 @@ public abstract class Des3 {
      */
     public static String encryptToBase64(String src, String key) throws Exception {
         byte[] byteSrc = src.getBytes(CHARSET);
-        byte[] byteKey = base64Decode(key);
-        return base64Encode(encrypt(byteSrc, byteKey));
+        byte[] byteKey = Base64.decode(key);
+        return Base64.encode(encrypt(byteSrc, byteKey));
     }
 
     /**
@@ -63,8 +60,8 @@ public abstract class Des3 {
      * @throws Exception
      */
     public static String decryptByBase64(String src, String key) throws Exception {
-        byte[] byteKey = base64Decode(key);
-        byte[] data = base64Decode(src);
+        byte[] byteKey = Base64.decode(key);
+        byte[] data = Base64.decode(src);
         return new String(decrypt(data, byteKey), CHARSET);
     }
 
@@ -106,17 +103,6 @@ public abstract class Des3 {
      */
     public static String build3DesKeyToBase64() throws NoSuchAlgorithmException {
         byte[] key = build3DesKey();
-        return base64Encode(key);
-    }
-
-    static final byte[] CHUNK_SEPARATOR = new byte[]{(byte) 13, (byte) 10};
-
-    private static String base64Encode(byte[] data) {
-//        return new BASE64Encoder().encodeBuffer(data);
-        return new Base64(0, CHUNK_SEPARATOR, false).encodeToString(data);
-    }
-
-    private static byte[] base64Decode(String data) throws IOException {
-        return new Base64(0, CHUNK_SEPARATOR, false).decode(data);
+        return Base64.encode(key);
     }
 }

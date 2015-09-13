@@ -1,12 +1,10 @@
 package org.treeleaf.common.safe;
 
-import org.apache.commons.codec.binary.Base64;
-
 import java.util.UUID;
 
 /**
  * UUID生成工具
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/5/7.
  */
 public class Uuid {
@@ -38,8 +36,7 @@ public class Uuid {
         long most = uuid.getMostSignificantBits();
         long2bytes(most, byUuid, 0);
         long2bytes(least, byUuid, 8);
-        String compressUUID = Base64.encodeBase64URLSafeString(byUuid);
-        return compressUUID;
+        return Base64.encodeURLSafe(byUuid);
     }
 
     private static void long2bytes(long value, byte[] bytes, int offset) {
