@@ -5,17 +5,19 @@
     <parent>
         <artifactId>treeleaf</artifactId>
         <groupId>org.treeleaf.framework</groupId>
-        <version>1.1.0.SNAPSHOT</version>
+        <version>${treeleaf.version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>treeleaf-web</artifactId>
 
+
     <dependencies>
+
         <dependency>
             <groupId>org.treeleaf.framework</groupId>
             <artifactId>treeleaf-common</artifactId>
-            <version>1.1.0.SNAPSHOT</version>
+            <version>${treeleaf.version}</version>
         </dependency>
 
         <!--javaee -->
@@ -33,42 +35,43 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--log4j2.x-web-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>2.3</version>
+        </dependency>
+
         <!-- spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>4.1.6.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-jdbc</artifactId>-->
-            <!--<version>4.1.6.RELEASE</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>4.1.6.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>4.1.6.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <!-- spring mvc -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>4.1.6.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>4.1.6.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 
