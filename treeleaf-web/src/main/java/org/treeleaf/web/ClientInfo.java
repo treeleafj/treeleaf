@@ -9,11 +9,21 @@ public class ClientInfo {
 
     private String ip;
 
+    private boolean mobile;
+
     public String getIp() {
         return ip;
     }
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public boolean isMobile() {
+        return mobile;
+    }
+
+    public void setMobile(boolean mobile) {
+        this.mobile = mobile;
     }
 }
