@@ -2,6 +2,7 @@ package org.treeleaf.common.safe;
 
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
+import org.treeleaf.common.exception.RetCode;
 
 /**
  * @Author leaf
@@ -11,7 +12,7 @@ public class AssertResult {
 
     private boolean result;
 
-    private String retCode;
+    private String retCode = RetCode.FAIL_PARAM;
 
     public AssertResult(boolean result) {
         this.result = result;
