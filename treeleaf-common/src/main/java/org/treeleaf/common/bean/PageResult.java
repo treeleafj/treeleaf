@@ -37,7 +37,7 @@ public class PageResult {
      * @param size  分页大小
      * @param list  查询的结果数据
      */
-    public PageResult(Long start, int size, List list) {
+    public PageResult(long start, int size, List list) {
         this.size = size;
         this.start = start;
         this.list = list;
@@ -51,9 +51,37 @@ public class PageResult {
      * @param list  查询的结果数据
      * @param total 总条数
      */
-    public PageResult(Long start, int size, List list, long total) {
+    public PageResult(long start, int size, List list, long total) {
         this.size = size;
         this.start = start;
+        this.list = list;
+        this.total = total;
+    }
+
+    /**
+     * 构造分页查询结果对象
+     *
+     * @param start 开始行号
+     * @param size  分页大小
+     * @param list  查询的结果数据
+     */
+    public PageResult(int start, int size, List list) {
+        this.size = size;
+        this.start = Long.valueOf(start);
+        this.list = list;
+    }
+
+    /**
+     * 构造分页查询结果对象
+     *
+     * @param start 开始行号
+     * @param size  分页大小
+     * @param list  查询的结果数据
+     * @param total 总条数
+     */
+    public PageResult(int start, int size, List list, long total) {
+        this.size = size;
+        this.start = Long.valueOf(start);
         this.list = list;
         this.total = total;
     }
