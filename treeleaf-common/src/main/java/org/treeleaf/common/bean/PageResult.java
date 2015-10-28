@@ -10,15 +10,7 @@ import java.util.List;
  */
 public class PageResult {
 
-    /**
-     * 每一页面的大小
-     */
-    private Integer size;
-
-    /**
-     * 开始行号,从0开始
-     */
-    private Long start;
+    private Pageable pageable;
 
     /**
      * 查出来的数据
@@ -28,32 +20,27 @@ public class PageResult {
     /**
      * 总条数
      */
-    private Long total;
+    private long total;
 
     /**
      * 构造分页查询结果对象
      *
-     * @param start 开始行号
-     * @param size  分页大小
-     * @param list  查询的结果数据
+     * @param pageable 分页请求
+     * @param list     查询的结果数据
      */
-    public PageResult(long start, int size, List list) {
-        this.size = size;
-        this.start = start;
-        this.list = list;
+    public PageResult(Pageable pageable, List list) {
+        this(pageable, list, Long.valueOf(String.valueOf(list.size())));
     }
 
     /**
      * 构造分页查询结果对象
      *
-     * @param start 开始行号
-     * @param size  分页大小
-     * @param list  查询的结果数据
-     * @param total 总条数
+     * @param pageable 分页请求
+     * @param list     查询的结果数据
+     * @param total    总条数
      */
-    public PageResult(long start, int size, List list, long total) {
-        this.size = size;
-        this.start = start;
+    public PageResult(Pageable pageable, List list, long total) {
+        this.pageable = pageable;
         this.list = list;
         this.total = total;
     }
@@ -61,41 +48,33 @@ public class PageResult {
     /**
      * 构造分页查询结果对象
      *
-     * @param start 开始行号
-     * @param size  分页大小
-     * @param list  查询的结果数据
+     * @param pageNo   页码
+     * @param pageSize 每页大小
+     * @param list     查询的结果数据
      */
-    public PageResult(int start, int size, List list) {
-        this.size = size;
-        this.start = Long.valueOf(start);
-        this.list = list;
+    public PageResult(int pageNo, int pageSize, List list) {
+        this(new Pageable(pageNo, pageSize), list);
     }
 
     /**
      * 构造分页查询结果对象
      *
-     * @param start 开始行号
-     * @param size  分页大小
-     * @param list  查询的结果数据
-     * @param total 总条数
+     * @param pageNo   页码
+     * @param pageSize 每页大小
+     * @param list     查询的结果数据
+     * @param total    总条数
      */
-    public PageResult(int start, int size, List list, long total) {
-        this.size = size;
-        this.start = Long.valueOf(start);
-        this.list = list;
-        this.total = total;
+    public PageResult(int pageNo, int pageSize, List list, long total) {
+        this(new Pageable(pageNo, pageSize), list, total);
     }
 
     /**
-     * 获取当前的页码
+     * 获取当前页码
      *
      * @return
      */
-    public Long getPageNum() {
-        if (start != null) {
-            return (start / 10) + 1;
-        }
-        return null;
+    public int getPageNo() {
+        return this.pageable.getPageNo();
     }
 
     /**
@@ -103,28 +82,36 @@ public class PageResult {
      *
      * @return
      */
-    public Long getTotalPage() {
-        if (total != null && size != null) {
-            long l = total / size;
-            return total % size == 0 ? l : l + 1;
-        }
-        return null;
+    public long getTotalPage() {
+        long l = total / this.pageable.getPageSize();
+        return total % this.pageable.getPageSize() == 0 ? l : l + 1;
     }
 
-    public Integer getSize() {
-        return size;
+    /**
+     * 获取每页大小
+     *
+     * @return
+     */
+    public int getPageSize() {
+        return this.pageable.getPageSize();
     }
 
-    public Long getStart() {
-        return start;
+    /**
+     * 获取起始偏移量(从0开始)
+     *
+     * @return
+     */
+    public int getOffset() {
+        return this.pageable.getOffset();
     }
 
+    /**
+     * 获取数据
+     *
+     * @return
+     */
     public List getList() {
         return list;
-    }
-
-    public Long getTotal() {
-        return total;
     }
 
 }
