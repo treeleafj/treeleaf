@@ -114,4 +114,8 @@ public class PageResult {
         return list;
     }
 
+    public long getTotal() {
+        return total;
+    }
+
 }

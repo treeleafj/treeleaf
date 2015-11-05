@@ -13,20 +13,19 @@ public class Pageable {
     /**
      * 页码,从1开始
      */
-    private int pageNo;
+    private int pageNo = 1;
 
     /**
      * 每页大小,从1开始
      */
-    private int pageSize;
+    private int pageSize = 1;
 
     public Pageable() {
     }
 
     public Pageable(int pageNo, int pageSize) {
-
-        Assert.numberLessOrEqual(pageNo, 0, "pageNo不能小于1");
-        Assert.numberLessOrEqual(pageSize, 0, "pageSize不能小于1");
+        Assert.isTrue(pageNo > 0, "pageNo不能小于1");
+        Assert.isTrue(pageSize > 0, "pageSize不能小于1");
 
         this.pageNo = pageNo;
         this.pageSize = pageSize;
