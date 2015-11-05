@@ -1,25 +1,16 @@
 package org.treeleaf.cache.redis;
 
+import org.apache.commons.lang3.StringUtils;
 import org.treeleaf.cache.CacheConfig;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
- * jedisPool的工厂,用于屏蔽掉具体的初始化工作
- * <p/>
+ * JedisPool的构建工厂,用于屏蔽掉具体的初始化工作
+ * <p>
  * Created by yaoshuhong on 2015/6/3.
  */
 public class JedisPoolFactory {
-
-    /**
-     * 默认数据库是0
-     */
-    public static final int DEFAULT_DATABASE = 0;
-
-    /**
-     * 默认超时时间
-     */
-    public static final int DEFAULT_TIMEOUT = 10000;
 
     private static volatile JedisPool jedisPool = null;
 
@@ -39,7 +30,11 @@ public class JedisPoolFactory {
                 poolConfig.setMaxWaitMillis(cacheConfig.getMaxWaitmillis());
 //                poolConfig.setTestOnBorrow(true);//保证每次的jedis对象都是可用的,暂不启用,会导致性能下降一半
 
-                jedisPool = new JedisPool(poolConfig, cacheConfig.getHost(), cacheConfig.getPort(), DEFAULT_TIMEOUT, cacheConfig.getPassword(), DEFAULT_DATABASE, null);
+                if (StringUtils.isNotBlank(cacheConfig.getPassword())) {
+                    jedisPool = new JedisPool(poolConfig, cacheConfig.getHost(), cacheConfig.getPort(), cacheConfig.getTimeout(), cacheConfig.getPassword());
+                } else {
+                    jedisPool = new JedisPool(poolConfig, cacheConfig.getHost(), cacheConfig.getPort(), cacheConfig.getTimeout());
+                }
             }
         }
         return jedisPool;

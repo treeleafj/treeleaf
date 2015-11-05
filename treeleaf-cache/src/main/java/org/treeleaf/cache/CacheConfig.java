@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 缓存配置
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/6/3.
  */
 public class CacheConfig {
@@ -46,6 +46,11 @@ public class CacheConfig {
      * 默认采用的cache实现, 0为redis, 1为本地内存
      */
     private int type = 0;
+
+    /**
+     * 超时时间,默认10秒
+     */
+    private int timeout = 10000;
 
     private static CacheConfig cacheConfig;
 
@@ -120,5 +125,13 @@ public class CacheConfig {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 }
