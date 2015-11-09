@@ -8,14 +8,14 @@ import java.util.List;
  * @Author leaf
  * 2015/10/12 0012 22:30.
  */
-public class PageResult {
+public class PageResult<T> {
 
     private Pageable pageable;
 
     /**
      * 查出来的数据
      */
-    private List list;
+    private List<T> list;
 
     /**
      * 总条数
@@ -28,7 +28,7 @@ public class PageResult {
      * @param pageable 分页请求
      * @param list     查询的结果数据
      */
-    public PageResult(Pageable pageable, List list) {
+    public PageResult(Pageable pageable, List<T> list) {
         this(pageable, list, Long.valueOf(String.valueOf(list.size())));
     }
 
@@ -39,7 +39,7 @@ public class PageResult {
      * @param list     查询的结果数据
      * @param total    总条数
      */
-    public PageResult(Pageable pageable, List list, long total) {
+    public PageResult(Pageable pageable, List<T> list, long total) {
         this.pageable = pageable;
         this.list = list;
         this.total = total;
@@ -52,7 +52,7 @@ public class PageResult {
      * @param pageSize 每页大小
      * @param list     查询的结果数据
      */
-    public PageResult(int pageNo, int pageSize, List list) {
+    public PageResult(int pageNo, int pageSize, List<T> list) {
         this(new Pageable(pageNo, pageSize), list);
     }
 
@@ -64,7 +64,7 @@ public class PageResult {
      * @param list     查询的结果数据
      * @param total    总条数
      */
-    public PageResult(int pageNo, int pageSize, List list, long total) {
+    public PageResult(int pageNo, int pageSize, List<T> list, long total) {
         this(new Pageable(pageNo, pageSize), list, total);
     }
 
