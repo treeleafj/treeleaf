@@ -1,4 +1,4 @@
-package org.treeleaf.web;
+package org.treeleaf.common.bean;
 
 /**
  * @Author leaf

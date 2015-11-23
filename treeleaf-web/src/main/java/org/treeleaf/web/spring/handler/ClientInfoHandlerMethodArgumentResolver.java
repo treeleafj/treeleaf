@@ -8,7 +8,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.treeleaf.web.ClientInfo;
+import org.treeleaf.common.bean.ClientInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;

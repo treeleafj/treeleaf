@@ -50,4 +50,22 @@ public class Pageable {
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
+
+    /**
+     * 设置页码,从1开始,兼容Extjs等框架
+     *
+     * @param page
+     */
+    public void setPage(int page) {
+        this.setPageNo(page);
+    }
+
+    /**
+     * 设置每页大小,兼容Extjs等框架
+     *
+     * @param limit
+     */
+    public void setLimit(int limit) {
+        this.setPageSize(limit);
+    }
 }
