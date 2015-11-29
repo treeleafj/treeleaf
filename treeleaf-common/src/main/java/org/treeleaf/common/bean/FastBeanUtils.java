@@ -35,7 +35,7 @@ public class FastBeanUtils extends BeanUtils {
      * @throws java.lang.reflect.InvocationTargetException
      * @throws IllegalArgumentException
      */
-        public static <T> T fastPopulate(Class<T> classz, Map<String, Object> properties) {
+    public static <T> T fastPopulate(Class<T> classz, Map<String, Object> properties) {
         try {
             Object obj = classz.newInstance();
             fastPopulate(obj, properties);
@@ -60,13 +60,16 @@ public class FastBeanUtils extends BeanUtils {
         if (map.size() > 0) {
             try {
                 for (Map.Entry<String, Object> entry : properties.entrySet()) {
+
                     PropertiesEntry pe = map.get(entry.getKey());
                     if (pe != null) {
                         if (pe.getSet() != null) {
-                            Object v = ConvertUtils.convert(entry.getValue(), pe.getType());
-
-                            pe.getSet().invoke(obj, v);
-
+                            if (entry.getValue() != null) {
+                                Object v = ConvertUtils.convert(entry.getValue(), pe.getType());
+                                pe.getSet().invoke(obj, v);
+                            } else {
+                                entry.setValue(null);
+                            }
                         }
                     }
                 }

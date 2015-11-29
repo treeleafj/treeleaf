@@ -74,7 +74,9 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
         for (int i = 0; i < dbTableMeta.getColumnMetas().size(); i++) {
             DBColumnMeta dbColumnMeta = dbTableMeta.getColumnMetas().get(i);
             if (!dbColumnMeta.isPrimaryKey()) {
+                sb.append('`');
                 sb.append(dbColumnMeta.getName());
+                sb.append('`');
                 sb.append(" = ?,");
 
                 Field field = dbColumnMeta.getField();
@@ -130,8 +132,9 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             if (dbColumnMeta.isPrimaryKey() && dbColumnMeta.isAutoIncremen()) {
                 continue;
             }
-
+            names.append('`');
             names.append(dbColumnMeta.getName());
+            names.append('`');
             names.append(",");
 
             values.append("?,");

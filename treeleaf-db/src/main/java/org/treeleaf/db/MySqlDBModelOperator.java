@@ -41,7 +41,7 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
      *
      * @param model
      */
-    public void save(Object model, Connection connection) {
+    public void save(Object model, Connection... connection) {
         if (model == null) {
             log.warn("更新数据失败,传入的model对象为null");
             return;
@@ -50,15 +50,17 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeInsert(dbTableMeta, model);
 
-        log.debug("sql:" + analyzeResult.getSql() + ",param:" + Arrays.toString(analyzeResult.getParams()));
+        log.debug("sql:" + analyzeResult.getSql() + "; param:" + Arrays.toString(analyzeResult.getParams()));
+
+        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
 
         QueryRunner queryRunner = new QueryRunner();
         try {
-            queryRunner.update(connection, analyzeResult.getSql(), analyzeResult.getParams());
+            queryRunner.update(conn, analyzeResult.getSql(), analyzeResult.getParams());
 
             if (dbTableMeta.getPrimaryKeys().size() == 1
                     && dbTableMeta.getPrimaryKeys().get(0).isAutoIncremen()) {
-                Object id = queryRunner.query(connection, "SELECT LAST_INSERT_ID()", new ScalarHandler(1));
+                Object id = queryRunner.query(conn, "SELECT LAST_INSERT_ID()", new ScalarHandler(1));
                 Field field = dbTableMeta.getPrimaryKeys().get(0).getField();
                 FastBeanUtils.setFieldValue(field, model, id);
             }
@@ -78,13 +80,16 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
      * @param <T>
      * @return
      */
-    public <T extends Model> List<T> findByExample(Example example, Class<T> classz, Connection connection) {
+    public <T extends Model> List<T> findByExample(Example example, Class<T> classz, Connection... connection) {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeSelectByExample(dbTableMeta, example);
-        log.debug("sql:" + analyzeResult.getSql() + ",param:" + Arrays.toString(analyzeResult.getParams()));
+        log.debug("sql:[" + analyzeResult.getSql() + "] param:[" + Arrays.toString(analyzeResult.getParams()) + "]");
+
+        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+
         QueryRunner queryRunner = new QueryRunner();
         try {
-            return queryRunner.query(connection, analyzeResult.getSql(), new AnnotationBeanListHandler<>(classz), analyzeResult.getParams());
+            return queryRunner.query(conn, analyzeResult.getSql(), new AnnotationBeanListHandler<>(classz), analyzeResult.getParams());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -94,4 +99,5 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
     public SqlAnalyzer getSqlAnalyzer() {
         return this.sqlAnalyzer;
     }
+
 }

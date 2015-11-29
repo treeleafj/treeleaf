@@ -19,7 +19,19 @@ public interface DBOperator {
      * @param <T>
      * @return
      */
-    <T> List<T> selectBySql(String sql, Object[] params, Class<T> modelType, Connection connection);
+    <T> List<T> selectBySql(String sql, Object[] params, Class<T> modelType, Connection... connection);
+
+    /**
+     * 通过sql查询单条数据
+     *
+     * @param sql
+     * @param params
+     * @param classz
+     * @param connection
+     * @param <T>
+     * @return
+     */
+    <T> T selectOneBySql(String sql, Object[] params, Class<T> classz, Connection... connection);
 
     /**
      * 执行更新语句
@@ -29,6 +41,6 @@ public interface DBOperator {
      * @param connection
      * @return
      */
-    int updateBySql(String sql, Object[] params, Connection connection);
+    int updateBySql(String sql, Object[] params, Connection... connection);
 
 }

@@ -18,7 +18,7 @@ public interface DBModelOperator extends DBOperator {
      *
      * @param model
      */
-    void save(Object model, Connection connection);
+    void save(Object model, Connection... connection);
 
     /**
      * 更新指定Id的数据
@@ -26,7 +26,7 @@ public interface DBModelOperator extends DBOperator {
      * @param model
      * @return
      */
-    boolean update(Object model, Connection connection);
+    boolean update(Object model, Connection... connection);
 
     /**
      * 删除指定个Id的数据
@@ -34,7 +34,7 @@ public interface DBModelOperator extends DBOperator {
      * @param id
      * @return
      */
-    boolean deleteById(Serializable id, Class classz, Connection connection);
+    boolean deleteById(Serializable id, Class classz, Connection... connection);
 
     /**
      * 查询指定Id的数据
@@ -44,7 +44,7 @@ public interface DBModelOperator extends DBOperator {
      * @param <T>
      * @return
      */
-    <T extends Model> T findById(Serializable id, Class<T> classz, Connection connection);
+    <T extends Model> T findById(Serializable id, Class<T> classz, Connection... connection);
 
     /**
      * 通过表达式查询数据
@@ -55,7 +55,7 @@ public interface DBModelOperator extends DBOperator {
      * @param <T>
      * @return
      */
-    <T extends Model> List<T> findByExample(Example example, Class<T> classz, Connection connection);
+    <T extends Model> List<T> findByExample(Example example, Class<T> classz, Connection... connection);
 
     /**
      * 根据表达式统计长度
@@ -66,5 +66,5 @@ public interface DBModelOperator extends DBOperator {
      * @param <T>
      * @return
      */
-    <T> long countByExample(Example example, Class<T> classz, Connection connection);
+    <T> long countByExample(Example example, Class<T> classz, Connection... connection);
 }
