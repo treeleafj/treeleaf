@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 数据库链接上下文,专门用户获取数据库链接
- * <p/>
+ * <p>
  * Created by leaf on 2015/1/4 0004.
  */
 public class ConnectionContext {
@@ -22,7 +22,7 @@ public class ConnectionContext {
     /**
      * 当前线程中通过ConnectionContext.getConnection()获取的数据库链接
      */
-    private static ThreadLocal<List<Connection>> currentConnections = new ThreadLocal<List<Connection>>();
+    private static ThreadLocal<List<Connection>> currentConnections = new ThreadLocal<>();
 
     /**
      * 设置当前获取数据库链接的工程
@@ -39,12 +39,27 @@ public class ConnectionContext {
      * @return
      */
     public static Connection getConnection() {
-        Connection connection = dbConnectionFactory.getConnection();
         List<Connection> connections = currentConnections.get();
+
+        try {
+            if (connections != null && connections.size() > 0) {
+                for (Connection conn : connections) {
+                    if (!conn.isClosed()) {
+                        return conn;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            log.warn("检查数据库连接是否关闭时出现异常", e);
+        }
+
+        Connection connection = dbConnectionFactory.getConnection();
+        log.info("获取一条新的数据库连接");
         if (connections == null) {
-            connections = new ArrayList<Connection>();
+            connections = new ArrayList<>();
             currentConnections.set(connections);
         }
+
         connections.add(connection);
         return connection;
     }
