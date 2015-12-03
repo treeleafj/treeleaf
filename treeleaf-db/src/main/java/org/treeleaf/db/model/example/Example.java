@@ -1,5 +1,7 @@
 package org.treeleaf.db.model.example;
 
+import org.treeleaf.common.bean.Pageable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +14,15 @@ import java.util.List;
 public abstract class Example<T extends Criteria> {
 
     protected String orderByClause;
+
     protected boolean distinct;
+
     protected List<T> oredCriteria;
+
     /**
-     * 默认查询10条
+     * 分页
      */
-    private int limit = 10;
-    /**
-     * 起始行号
-     */
-    private long start = 0;
+    private Pageable pageable;
 
     public Example() {
         oredCriteria = new ArrayList<T>();
@@ -31,16 +32,18 @@ public abstract class Example<T extends Criteria> {
         return orderByClause;
     }
 
-    public void setOrderByClause(String orderByClause) {
+    public Example setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
+        return this;
     }
 
     public boolean isDistinct() {
         return distinct;
     }
 
-    public void setDistinct(boolean distinct) {
+    public Example setDistinct(boolean distinct) {
         this.distinct = distinct;
+        return this;
     }
 
     public List<T> getOredCriteria() {
@@ -48,19 +51,20 @@ public abstract class Example<T extends Criteria> {
     }
 
     public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
+        return this.pageable != null ? this.pageable.getPageSize() : 10;
     }
 
     public long getStart() {
-        return start;
+        return this.pageable != null ? this.pageable.getOffset() : 0;
     }
 
-    public void setStart(long start) {
-        this.start = start;
+    public Pageable getPageable() {
+        return pageable;
+    }
+
+    public Example setPageable(Pageable pageable) {
+        this.pageable = pageable;
+        return this;
     }
 
     public void or(T criteria) {
@@ -81,10 +85,11 @@ public abstract class Example<T extends Criteria> {
         return criteria;
     }
 
-    public void clear() {
+    public Example clear() {
         oredCriteria.clear();
         orderByClause = null;
         distinct = false;
+        return this;
     }
 
     /**

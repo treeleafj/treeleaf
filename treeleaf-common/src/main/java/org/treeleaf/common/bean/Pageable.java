@@ -39,16 +39,18 @@ public class Pageable {
         return pageNo;
     }
 
-    public void setPageNo(int pageNo) {
+    public Pageable setPageNo(int pageNo) {
         this.pageNo = pageNo;
+        return this;
     }
 
     public int getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(int pageSize) {
+    public Pageable setPageSize(int pageSize) {
         this.pageSize = pageSize;
+        return this;
     }
 
     /**
@@ -56,8 +58,9 @@ public class Pageable {
      *
      * @param page
      */
-    public void setPage(int page) {
+    public Pageable setPage(int page) {
         this.setPageNo(page);
+        return this;
     }
 
     /**
@@ -65,7 +68,8 @@ public class Pageable {
      *
      * @param limit
      */
-    public void setLimit(int limit) {
+    public Pageable setLimit(int limit) {
         this.setPageSize(limit);
+        return this;
     }
 }
