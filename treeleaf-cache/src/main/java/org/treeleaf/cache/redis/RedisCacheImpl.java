@@ -7,10 +7,7 @@ import org.treeleaf.common.json.Jsoner;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 基于Redis的操作缓存实现
@@ -47,6 +44,26 @@ public class RedisCacheImpl implements Cache {
             return null;
         }
         return Jsoner.toObj(json, classz);
+    }
+
+    @Override
+    public <T> List<T> mget(String[] keys, Class<T>... classz) throws CacheException {
+
+        List<String> list = this.handler(jedis -> jedis.mget(keys));
+
+        if (classz.length > 0) {
+            List<T> objList = new ArrayList<>(list.size());
+            for (String s : list) {
+                if (StringUtils.isBlank(s)) {
+                    objList.add(null);
+                } else {
+                    objList.add(Jsoner.toObj(s, classz[0]));
+                }
+            }
+            return objList;
+        }
+
+        return (List<T>) list;
     }
 
     @Override

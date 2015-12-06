@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * 线程安全的缓存器,提供缓存操作功能,通过CacheFactory.getCache()可获取其实例
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/6/3.
  *
  * @see CacheFactory
@@ -14,7 +14,7 @@ public interface Cache {
 
     /**
      * 将数据永久缓存,并设定超时时间(秒为单位)
-     * <p/>
+     * <p>
      * 若存在相同key的数据,则会覆盖
      *
      * @param key           缓存中的key
@@ -39,6 +39,17 @@ public interface Cache {
      * @return null或者缓存中的数据
      */
     <T> T get(String key, Class<T> classz) throws CacheException;
+
+    /**
+     * 通过多个key获取对应的值
+     *
+     * @param keys   缓存中的key
+     * @param classz 要映射的类型, 如果不传则返回的类型为List&lt;String&gt;
+     * @param <T>
+     * @return
+     * @throws CacheException
+     */
+    <T> List<T> mget(String[] keys, Class<T>... classz) throws CacheException;
 
     /**
      * 删除指定key的数据
@@ -120,7 +131,7 @@ public interface Cache {
 
     /**
      * 将列表数据永久缓存,并设定超时时间(秒为单位)
-     * <p/>
+     * <p>
      * 若存在相同key的数据,则会覆盖
      *
      * @param key           缓存中的key
@@ -131,11 +142,11 @@ public interface Cache {
 
     /**
      * 将列表数据永久缓存,并设定超时时间(秒为单位)
-     * <p/>
+     * <p>
      * 若存在相同key的数据,则会覆盖
      *
-     * @param key   缓存中的key
-     * @param value 要缓存的列表
+     * @param key           缓存中的key
+     * @param value         要缓存的列表
      * @param expireSeconds 超时时间,只能填一个
      */
     <T extends Object> void setList(String key, List<T> value, int... expireSeconds) throws CacheException;

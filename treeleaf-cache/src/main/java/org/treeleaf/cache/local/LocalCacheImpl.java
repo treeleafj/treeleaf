@@ -28,6 +28,23 @@ public class LocalCacheImpl implements Cache {
     }
 
     @Override
+    public <T> List<T> mget(String[] keys, Class<T>... classz) throws CacheException {
+        if (classz.length > 0) {
+            List<T> objList = new ArrayList<>(keys.length);
+            for (String key : keys) {
+                objList.add(this.get(key, classz[0]));
+            }
+            return objList;
+        } else {
+            List<String> list = new ArrayList<>(keys.length);
+            for (String key : keys) {
+                list.add(this.get(key));
+            }
+            return (List<T>) list;
+        }
+    }
+
+    @Override
     public boolean del(String key) throws CacheException {
         Object r = cache.remove(key);
         return r != null;
