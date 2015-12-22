@@ -54,7 +54,6 @@ public class ConnectionContext {
         }
 
         Connection connection = dbConnectionFactory.getConnection();
-        log.info("获取一条新的数据库连接");
         if (connections == null) {
             connections = new ArrayList<>();
             currentConnections.set(connections);
