@@ -14,6 +14,7 @@
         <module>treeleaf-common</module>
         <module>treeleaf-cache</module>
         <module>treeleaf-db</module>
+        <module>treeleaf-config</module>
     </modules>
 
     <groupId>org.treeleaf.framework</groupId>
