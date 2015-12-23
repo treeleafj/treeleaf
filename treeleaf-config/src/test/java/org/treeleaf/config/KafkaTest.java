@@ -13,36 +13,31 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-/**
- * Created by yaoshuhong on 2015/12/23.
- */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextHierarchy({
-//        @ContextConfiguration(name = "parent", locations = "classpath:applicationContext.xml")
-//})
+
 public class KafkaTest {
 
     private static Logger log = LoggerFactory.getLogger(KafkaTest.class);
 
-//    @Autowired
-//    private ApplicationContext applicationContext;
+    String topic = "test";
 
     @org.junit.Test
     public void send() {
-        String topic = "test";
         Random rand = new Random();
 
         Properties props = new Properties();
-        props.put("metadata.broker.list", "localhost:9092");
+        props.put("metadata.broker.list", "112.74.129.99:9092");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "1");
 
         ProducerConfig config = new ProducerConfig(props);
 
+        int count = 0;
         while (true) {
-
+            if (count++ > 100) {
+                break;
+            }
             Producer<String, String> producer = new Producer<>(config);
-            for (long i = 0; i < 100; i++) {
+            for (long i = 0; i < 10; i++) {
                 String msg = "消息-" + rand.nextInt();
                 KeyedMessage<String, String> data = new KeyedMessage<>(topic, i + "", msg);
                 producer.send(data);
@@ -54,13 +49,11 @@ public class KafkaTest {
 
     @org.junit.Test
     public void consumert() {
-        System.out.println("开始消费");
         log.info("开始消费");
-        String topic = "test";
 
         Properties props = new Properties();
-        props.put("zookeeper.connect", "172.30.0.104:2181");
-        props.put("group.id", "cashierpay");
+        props.put("zookeeper.connect", "112.74.129.99:2181");
+        props.put("group.id", "cashierpay2");
         props.put("zookeeper.session.timeout.ms", "1000");
         props.put("zookeeper.sync.time.ms", "1000");
         props.put("auto.commit.interval.ms", "1000");
@@ -74,11 +67,11 @@ public class KafkaTest {
         log.info("createMessageStreams:{}", consumerMap);
         List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
         log.info("获取数据条数:{}", streams.size());
+        int num = 0;
         for (KafkaStream stream : streams) {
             ConsumerIterator<byte[], byte[]> it = stream.iterator();
             while (it.hasNext()) {
-//                log.info("消息:{}", new String(it.next().message()));
-                System.out.println("消息:"  + new String(it.next().message()));
+                log.info("第{}条消息:{}", (++num), new String(it.next().message()));
             }
         }
 
