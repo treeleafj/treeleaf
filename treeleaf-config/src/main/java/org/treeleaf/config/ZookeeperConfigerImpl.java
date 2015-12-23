@@ -18,20 +18,55 @@ public class ZookeeperConfigerImpl implements Configer {
 
     private static Logger log = LoggerFactory.getLogger(ZookeeperConfigerImpl.class);
 
-    private String connectStr = "172.30.0.104:2181";
+    private String connectStr;
 
     private int sleepMsBetweenRetries = 2000;
 
     private int retryNum = Integer.MAX_VALUE;
+
+    private String namespace = "config";
 
     private CuratorFramework client;
 
     public void init() {
         client = CuratorFrameworkFactory.builder()
                 .connectString(connectStr)
+                .namespace(namespace)
                 .retryPolicy(new RetryNTimes(retryNum, sleepMsBetweenRetries))
                 .connectionTimeoutMs(10000).build();
         client.start();
+
+        // 注册观察者，当节点变动时触发
+//        try {
+////            client.getData().usingWatcher((Watcher) event -> {
+////
+////                log.info("{}节点变动", event.getPath());
+////
+////            }).inBackground().forPath("/config");
+//
+//            ExecutorService pool = Executors.newFixedThreadPool(1);
+//
+//            PathChildrenCache childrenCache = new PathChildrenCache(client, "/", true);
+//            childrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+//            childrenCache.getListenable().addListener((client1, event) -> {
+//                switch (event.getType()) {
+//                    case CHILD_ADDED:
+//                        log.info("节点添加: {}", event.getData().getPath());
+//                        break;
+//                    case CHILD_REMOVED:
+//                        log.info("节点删除: {}", event.getData().getPath());
+//                        break;
+//                    case CHILD_UPDATED:
+//                        log.info("节点修改: {}", event.getData().getPath());
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }, pool);
+//
+//        } catch (Exception e) {
+//            log.info("注册监听失败", e);
+//        }
     }
 
     @Override
@@ -56,15 +91,17 @@ public class ZookeeperConfigerImpl implements Configer {
         return null;
     }
 
-    public Map<String, String> full(Map<String, String> map, String parentPath) throws Exception {
-        log.info(parentPath);
+    protected Map<String, String> full(Map<String, String> map, String parentPath) throws Exception {
         List<String> children = client.getChildren().forPath(parentPath);
         if (children.size() == 0) {//说明是最后一个了
             map.remove(parentPath);
-            map.put(parentPath, new String(client.getData().forPath(parentPath), "UTF-8"));
+            byte[] bytes = client.getData().forPath(parentPath);
+            if (bytes != null) {
+                map.put(parentPath, new String(bytes, "UTF-8"));
+            }
         } else {
             for (String child : children) {
-                if (!"/".equals(parentPath)) {
+                if (!parentPath.endsWith("/")) {
                     parentPath += "/";
                 }
                 full(map, parentPath + child);
@@ -73,10 +110,19 @@ public class ZookeeperConfigerImpl implements Configer {
         return map;
     }
 
-    public static void main(String[] args) {
-        ZookeeperConfigerImpl zookeeperConfiger = new ZookeeperConfigerImpl();
-        zookeeperConfiger.init();
-        Map<String, String> configs = zookeeperConfiger.getConfigs();
-        log.info("{}", configs);
+    public void setConnectStr(String connectStr) {
+        this.connectStr = connectStr;
+    }
+
+    public void setSleepMsBetweenRetries(int sleepMsBetweenRetries) {
+        this.sleepMsBetweenRetries = sleepMsBetweenRetries;
+    }
+
+    public void setRetryNum(int retryNum) {
+        this.retryNum = retryNum;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 }
