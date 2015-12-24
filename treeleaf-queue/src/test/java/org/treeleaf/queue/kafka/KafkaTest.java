@@ -1,4 +1,4 @@
-package org.treeleaf.config;
+package org.treeleaf.queue.kafka;
 
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
@@ -53,7 +53,7 @@ public class KafkaTest {
 
         Properties props = new Properties();
         props.put("zookeeper.connect", "112.74.129.99:2181");
-        props.put("group.id", "cashierpay2");
+        props.put("group.id", "123");
         props.put("zookeeper.session.timeout.ms", "1000");
         props.put("zookeeper.sync.time.ms", "1000");
         props.put("auto.commit.interval.ms", "1000");
@@ -63,6 +63,7 @@ public class KafkaTest {
 
         Map<String, Integer> topicCountMap = new HashMap<>();
         topicCountMap.put(topic, 1);
+
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumerConnector.createMessageStreams(topicCountMap);
         log.info("createMessageStreams:{}", consumerMap);
         List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);

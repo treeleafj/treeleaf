@@ -15,6 +15,7 @@
         <module>treeleaf-cache</module>
         <module>treeleaf-db</module>
         <module>treeleaf-config</module>
+        <module>treeleaf-queue</module>
     </modules>
 
     <groupId>org.treeleaf.framework</groupId>
