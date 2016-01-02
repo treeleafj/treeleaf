@@ -1,10 +1,11 @@
 package org.treeleaf.db.sql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.treeleaf.db.meta.DBTableMeta;
+import org.treeleaf.db.meta.DBTableMetaFactory;
 import org.treeleaf.db.model.example.Criteria;
 import org.treeleaf.db.model.example.Criterion;
 import org.treeleaf.db.model.example.Example;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,19 @@ public class MySqlAnalyzerImpl extends DefaultSqlAnalyzerImpl {
 
     @Override
     public AnalyzeResult analyzeSelectByExample(DBTableMeta dbTableMeta, Example example) {
-        StringBuilder stringBuilder1 = new StringBuilder("select * from ");
+        StringBuilder stringBuilder1 = new StringBuilder("select a.* from ");
         stringBuilder1.append(dbTableMeta.getName());
+
+        stringBuilder1.append(" as a ");
+        if (example.getLeftJoin() != null) {
+            DBTableMeta leftJoinDBTableMeta = DBTableMetaFactory.getDBTableMeta(example.getLeftJoin());
+            if (leftJoinDBTableMeta != null) {
+                stringBuilder1.append("left join ");
+                stringBuilder1.append(leftJoinDBTableMeta.getName());
+                stringBuilder1.append(" as b on ");
+                stringBuilder1.append(example.getOnWhere());
+            }
+        }
 
         StringBuilder stringBuilder2 = new StringBuilder();
 

@@ -3,6 +3,7 @@ package org.treeleaf.db.sql;
 import org.treeleaf.common.bean.FastBeanUtils;
 import org.treeleaf.db.meta.DBColumnMeta;
 import org.treeleaf.db.meta.DBTableMeta;
+import org.treeleaf.db.meta.DBTableMetaFactory;
 import org.treeleaf.db.model.example.Criteria;
 import org.treeleaf.db.model.example.Criterion;
 import org.treeleaf.db.model.example.Example;
@@ -160,6 +161,16 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
     public AnalyzeResult analyzeCountByExample(DBTableMeta dbTableMeta, Example example) {
         StringBuilder stringBuilder1 = new StringBuilder("select count(*) from ");
         stringBuilder1.append(dbTableMeta.getName());
+        stringBuilder1.append(" as a ");
+        if (example.getLeftJoin() != null) {
+            DBTableMeta leftJoinDBTableMeta = DBTableMetaFactory.getDBTableMeta(example.getLeftJoin());
+            if (leftJoinDBTableMeta != null) {
+                stringBuilder1.append("left join ");
+                stringBuilder1.append(leftJoinDBTableMeta.getName());
+                stringBuilder1.append(" as b on ");
+                stringBuilder1.append(example.getOnWhere());
+            }
+        }
 
         StringBuilder stringBuilder2 = new StringBuilder();
 

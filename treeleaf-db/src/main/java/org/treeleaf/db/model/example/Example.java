@@ -24,6 +24,10 @@ public abstract class Example<T extends Criteria> {
      */
     private Pageable pageable;
 
+    private Class leftJoin;
+
+    private String onWhere;
+
     public Example() {
         oredCriteria = new ArrayList<T>();
     }
@@ -99,5 +103,22 @@ public abstract class Example<T extends Criteria> {
      */
     protected abstract T createCriteriaInternal();
 
+    public Example leftJoin(Class leftJoin) {
+        this.leftJoin = leftJoin;
+        return this;
+    }
+
+    public Example on(String onWhere) {
+        this.onWhere = onWhere;
+        return this;
+    }
+
+    public Class getLeftJoin() {
+        return leftJoin;
+    }
+
+    public String getOnWhere() {
+        return onWhere;
+    }
 }
 
