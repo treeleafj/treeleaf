@@ -49,6 +49,10 @@ public class RedisCacheImpl implements Cache {
     @Override
     public <T> List<T> mget(String[] keys, Class<T>... classz) throws CacheException {
 
+        if (keys.length == 0) {
+            return new ArrayList<>();
+        }
+
         List<String> list = this.handler(jedis -> jedis.mget(keys));
 
         if (classz.length > 0) {
