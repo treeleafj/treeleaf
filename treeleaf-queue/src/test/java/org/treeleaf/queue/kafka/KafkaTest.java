@@ -8,6 +8,7 @@ import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,11 @@ public class KafkaTest {
     private static Logger log = LoggerFactory.getLogger(KafkaTest.class);
 
     String topic = "test";
+
+    @Test
+    public void test() {
+        log.info("测试");
+    }
 
     @org.junit.Test
     public void send() {

@@ -108,17 +108,20 @@ public class KafkaQueuer implements Queuer {
         ConsumerConnector consumerConnector = Consumer.createJavaConsumerConnector(consumerConfig);
 
         Map<String, Integer> topicCountMap = new HashMap<>();
-        topicCountMap.put(topic, 5);
+
+        int threadNum = 2;
+
+        topicCountMap.put(topic, threadNum);
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumerConnector.createMessageStreams(topicCountMap);
 
-        log.info("createMessageStreams数:{}", consumerMap.size());
+        log.info("MessageStreams数量:{}", consumerMap.size());
 
         List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
 
         log.info("获取stream条数:{}", streams.size());
 
 
-        ExecutorService executorService = Executors.newFixedThreadPool(6);
+        ExecutorService executorService = Executors.newFixedThreadPool(threadNum);
 
         for (KafkaStream stream : streams) {
 
