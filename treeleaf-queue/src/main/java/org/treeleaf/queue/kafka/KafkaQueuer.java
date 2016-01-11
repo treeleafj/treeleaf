@@ -109,7 +109,7 @@ public class KafkaQueuer implements Queuer {
 
         Map<String, Integer> topicCountMap = new HashMap<>();
 
-        int threadNum = 2;
+        int threadNum = 1;
 
         topicCountMap.put(topic, threadNum);
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumerConnector.createMessageStreams(topicCountMap);
