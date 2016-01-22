@@ -1,5 +1,6 @@
 package org.treeleaf.db.sql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.treeleaf.common.bean.FastBeanUtils;
 import org.treeleaf.db.meta.DBColumnMeta;
 import org.treeleaf.db.meta.DBTableMeta;
@@ -172,11 +173,23 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             }
         }
 
-        StringBuilder stringBuilder2 = new StringBuilder();
-
         List<Object> params = new ArrayList<Object>();
+        String where = buildWhere(example, params);
+
+        if (StringUtils.isNotBlank(where)) {
+            stringBuilder1.append(" where ");
+            stringBuilder1.append(where);
+        }
+
+        String sql = stringBuilder1.toString();
+        return new AnalyzeResult(sql, params.toArray());
+    }
+
+    protected String buildWhere(Example example, List<Object> params) {
 
         boolean isFirst = true;
+
+        StringBuilder stringBuilder2 = new StringBuilder();
 
         for (int i = 0; i < example.getOredCriteria().size(); i++) {
             Criteria criteria = (Criteria) example.getOredCriteria().get(i);
@@ -243,10 +256,30 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             }
             stringBuilder2.append(")");
         }
+        return stringBuilder2.toString();
+    }
 
-        if (!isFirst) {
+    @Override
+    public AnalyzeResult analyzeSumByExample(DBTableMeta dbTableMeta, Example example) {
+        StringBuilder stringBuilder1 = new StringBuilder("select sum(" + example.getSumField() + ") from ");
+        stringBuilder1.append(dbTableMeta.getName());
+        stringBuilder1.append(" as a ");
+        if (example.getLeftJoin() != null) {
+            DBTableMeta leftJoinDBTableMeta = DBTableMetaFactory.getDBTableMeta(example.getLeftJoin());
+            if (leftJoinDBTableMeta != null) {
+                stringBuilder1.append("left join ");
+                stringBuilder1.append(leftJoinDBTableMeta.getName());
+                stringBuilder1.append(" as b on ");
+                stringBuilder1.append(example.getOnWhere());
+            }
+        }
+
+        List<Object> params = new ArrayList<Object>();
+        String where = buildWhere(example, params);
+
+        if (StringUtils.isNotBlank(where)) {
             stringBuilder1.append(" where ");
-            stringBuilder1.append(stringBuilder2);
+            stringBuilder1.append(where);
         }
 
         String sql = stringBuilder1.toString();

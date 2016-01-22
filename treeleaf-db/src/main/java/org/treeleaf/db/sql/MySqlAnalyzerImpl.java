@@ -34,81 +34,12 @@ public class MySqlAnalyzerImpl extends DefaultSqlAnalyzerImpl {
             }
         }
 
-        StringBuilder stringBuilder2 = new StringBuilder();
-
         List<Object> params = new ArrayList<Object>();
+        String where = buildWhere(example, params);
 
-        boolean isFirst = true;
-
-        for (int i = 0; i < example.getOredCriteria().size(); i++) {
-            Criteria criteria = (Criteria) example.getOredCriteria().get(i);
-
-            if (!criteria.isValid()) {
-                continue;
-            }
-
-            if (!isFirst) {
-                stringBuilder2.append(" or ");
-            }
-
-            isFirst = false;
-
-            stringBuilder2.append("(");
-            for (int j = 0; j < criteria.getAllCriteria().size(); j++) {
-                Criterion criterion = criteria.getAllCriteria().get(j);
-                if (j != 0) {
-                    stringBuilder2.append(" and ");
-                }
-
-                if (criterion.isNoValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-
-                } else if (criterion.isSingleValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append(" ? ");
-                    params.add(criterion.getValue());
-
-                } else if (criterion.isBetweenValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append(" ? ");
-                    stringBuilder2.append(" and ");
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append(" ? ");
-
-                    params.add(criterion.getValue());
-                    params.add(criterion.getSecondValue());
-
-                } else if (criterion.isListValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append("(");
-
-                    List<Object> list = (List<Object>) criterion.getValue();
-
-                    for (Object o : list) {
-                        stringBuilder2.append(" ? ");
-                        stringBuilder2.append(",");
-                        params.add(o);
-                    }
-                    if (list.size() > 0) {
-                        stringBuilder2.deleteCharAt(stringBuilder2.length() - 1);
-                    }
-                    stringBuilder2.append(")");
-
-                }
-            }
-            stringBuilder2.append(")");
-        }
-
-        if (!isFirst) {
+        if (StringUtils.isNotBlank(where)) {
             stringBuilder1.append(" where ");
-            stringBuilder1.append(stringBuilder2);
+            stringBuilder1.append(where);
         }
 
         if (StringUtils.isNotBlank(example.getOrderByClause())) {

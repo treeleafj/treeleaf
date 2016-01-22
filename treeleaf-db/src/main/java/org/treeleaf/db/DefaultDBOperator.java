@@ -201,6 +201,22 @@ public abstract class DefaultDBOperator implements DBModelOperator {
         }
     }
 
+    @Override
+    public <T> Object sumByExample(Example example, Class<T> classz, Connection... connection) {
+        DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
+        AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeSumByExample(dbTableMeta, example);
+        log.debug("sql:" + analyzeResult.getSql() + "; param:" + Arrays.toString(analyzeResult.getParams()));
+        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+
+        QueryRunner queryRunner = new QueryRunner();
+        try {
+            T result = queryRunner.query(conn, analyzeResult.getSql(), new ScalarHandler<T>(1), analyzeResult.getParams());
+            return result == null ? 0D : result;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * 该方法由子类实现,根据不同的数据库返回不同sql解析器
      *

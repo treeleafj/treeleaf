@@ -26,6 +26,11 @@ public abstract class Example<T extends Criteria> {
 
     private Class leftJoin;
 
+    /**
+     * 统计的某个字段
+     */
+    private String sumField;
+
     private String onWhere;
 
     public Example() {
@@ -119,6 +124,15 @@ public abstract class Example<T extends Criteria> {
 
     public String getOnWhere() {
         return onWhere;
+    }
+
+    public String getSumField() {
+        return sumField;
+    }
+
+    public Example sumField(String sumField) {
+        this.sumField = sumField;
+        return this;
     }
 }
 

@@ -67,4 +67,15 @@ public interface DBModelOperator extends DBOperator {
      * @return
      */
     <T> long countByExample(Example example, Class<T> classz, Connection... connection);
+
+    /**
+     * 统计某个字段的和
+     *
+     * @param example
+     * @param classz
+     * @param connection
+     * @param <T>
+     * @return
+     */
+    <T> Object sumByExample(Example example, Class<T> classz, Connection... connection);
 }

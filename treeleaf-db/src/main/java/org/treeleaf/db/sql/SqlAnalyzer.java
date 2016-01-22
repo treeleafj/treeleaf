@@ -62,4 +62,12 @@ public interface SqlAnalyzer {
      */
     AnalyzeResult analyzeCountByExample(DBTableMeta dbTableMeta, Example example);
 
+    /**
+     * 解析统计字段之和的语句
+     *
+     * @param dbTableMeta
+     * @param example
+     * @return
+     */
+    AnalyzeResult analyzeSumByExample(DBTableMeta dbTableMeta, Example example);
 }
