@@ -43,5 +43,8 @@ public abstract class RetCode {
      */
     public final static String FAIL_REMOTE = "999994";
 
-
+    /**
+     * 未登陆异常
+     */
+    public final static String FAIL_UNLOGIN = "999993";
 }
