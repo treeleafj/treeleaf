@@ -77,7 +77,7 @@ public class PrintLogHandlerInerceptor implements HandlerInterceptor {
             long ms = System.currentTimeMillis() - t;
 
             e = (e != null ? e : (Exception) request.getAttribute(CommonConstant.ATTR_CACHE_EXCEPTION));
-            String msg = String.format("结束调用[%s][%s]接口! 用时: %s 毫秒!", request.getRequestURI(), classSimpleName + "." + hm.getMethod().getName(), ms);
+            String msg = String.format("结束调用[%s][%s]接口! 用时: %s 毫秒!", request.getServletPath(), classSimpleName + "." + hm.getMethod().getName(), ms);
 
             if (e != null) {
                 if (e instanceof BaseException && e.getCause() == null) {
