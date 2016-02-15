@@ -110,7 +110,7 @@ public class PageResult<T> {
      *
      * @return
      */
-    public List getList() {
+    public List<T> getList() {
         return list;
     }
 
