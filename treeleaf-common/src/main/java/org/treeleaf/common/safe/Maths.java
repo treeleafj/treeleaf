@@ -24,7 +24,6 @@ public abstract class Maths {
         return r.doubleValue();
     }
 
-
     /**
      * 多个数字相减
      *
