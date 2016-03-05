@@ -7,6 +7,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.treeleaf.web.Text;
+import org.treeleaf.web.spring.Jsonp;
+import org.treeleaf.web.spring.view.JsonpView;
 import org.treeleaf.web.spring.view.TextView;
 
 /**
@@ -31,7 +33,11 @@ public class TextHandlerMethodReturnValueHandler implements HandlerMethodReturnV
         //设置为Text视图并输出数据
         Text text = (Text) returnValue;
         if (text != null) {
-            mavContainer.setView(new TextView(text));
+            if (text instanceof Jsonp) {
+                mavContainer.setView(new JsonpView(text));
+            } else {
+                mavContainer.setView(new TextView(text));
+            }
         } else {
             log.warn("返回Text类型时错误,返回了null");
         }
