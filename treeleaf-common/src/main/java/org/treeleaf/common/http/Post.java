@@ -61,6 +61,11 @@ public class Post {
         return this;
     }
 
+    public Post header(String name, String val) {
+        httpPost.addHeader(name, val);
+        return this;
+    }
+
     public String post() {
         return httpPost.post();
     }

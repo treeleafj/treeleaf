@@ -57,6 +57,11 @@ public class Get {
         return this;
     }
 
+    public Get header(String name, String val) {
+        httpGet.addHeader(name, val);
+        return this;
+    }
+
     public String get() {
         return httpGet.get();
     }
