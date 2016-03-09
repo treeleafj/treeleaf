@@ -1,5 +1,8 @@
 package org.treeleaf.common.safe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Sha {
 
+    private static Logger log = LoggerFactory.getLogger(Sha.class);
 
     /**
      * 对字符串进行摘要,摘要算法使用SHA-256
@@ -26,7 +30,7 @@ public class Sha {
             md.update(bts);
             result = md.digest();
         } catch (NoSuchAlgorithmException e) {
-            return null;
+            throw new RuntimeException("加密失败", e);
         }
         return result;
     }
@@ -45,4 +49,38 @@ public class Sha {
             throw new RuntimeException("字符串转换为utf-8的byte时异常", e);
         }
     }
+
+    /**
+     * sha-1加密
+     *
+     * @param bts
+     * @return
+     */
+    public static byte[] sha1(byte[] bts) {
+        MessageDigest crypt = null;
+        try {
+            crypt = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("加密失败", e);
+        }
+        crypt.reset();
+        crypt.update(bts);
+        byte[] digest = crypt.digest();
+        return digest;
+    }
+
+    /**
+     * sha-1加密
+     *
+     * @param bts
+     * @return
+     */
+    public static byte[] sha1(String bts) {
+        try {
+            return sha1(bts.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("字符串转换为utf-8的byte时异常", e);
+        }
+    }
+
 }
