@@ -16,6 +16,7 @@
         <module>treeleaf-db</module>
         <module>treeleaf-config</module>
         <module>treeleaf-queue</module>
+        <module>treeleaf-wechat</module>
     </modules>
 
     <groupId>org.treeleaf.framework</groupId>

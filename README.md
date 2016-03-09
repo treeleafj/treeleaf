@@ -6,3 +6,7 @@
 > treeleaf-db 数据库操作扩展
 
 > treeleaf-web web框架
+
+> treeleaf-queue 队列客户端框架
+
+> treeleaf-wechat 微信调用工具
