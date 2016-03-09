@@ -26,6 +26,13 @@
             <version>${treeleaf.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.treeleaf.framework</groupId>
+            <artifactId>treeleaf-db</artifactId>
+            <version>${treeleaf.version}</version>
+            <optional>true</optional>
+        </dependency>
+
         <!--javaee -->
         <dependency>
             <groupId>javax.servlet</groupId>
