@@ -63,7 +63,7 @@ public class Jssdk {
                 .param("grant_type", "authorization_code")
                 .post();
 
-        log.info("调用微信网页授权access_token接口,返回:{}", s);
+        log.info("调用微信获取oauth2授权的access_token接口,返回:{}", s);
 
         return Jsoner.toObj(s, AuthAccessToken.class);
     }
@@ -99,7 +99,7 @@ public class Jssdk {
                 .param("lang", "zh_CN")
                 .post();
 
-        log.info("调用微信获取用户基本信息接口,返回:{}", result);
+        log.info("调用微信获取已授权用户基本信息接口,返回:{}", result);
         return Jsoner.toObj(result, SnsUserInfo.class);
     }
 
@@ -116,6 +116,7 @@ public class Jssdk {
                 .param("openid", openid)
                 .param("lang", "zh_CN")
                 .get();
+        log.info("调用微信获取已关注用户信息接口,返回:{}", s);
         return Jsoner.toObj(s, UserInfo.class);
     }
 
