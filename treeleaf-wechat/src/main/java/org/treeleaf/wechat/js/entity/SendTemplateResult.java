@@ -1,4 +1,4 @@
-package org.treeleaf.wechat.entity;
+package org.treeleaf.wechat.js.entity;
 
 /**
  * Created by yaoshuhong on 2016/3/9.

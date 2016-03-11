@@ -1,4 +1,4 @@
-package org.treeleaf.wechat;
+package org.treeleaf.wechat.js;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +7,7 @@ import org.treeleaf.common.http.Post;
 import org.treeleaf.common.json.Jsoner;
 import org.treeleaf.common.safe.Sha;
 import org.treeleaf.common.safe.Uuid;
-import org.treeleaf.wechat.entity.*;
+import org.treeleaf.wechat.js.entity.*;
 
 import java.util.Formatter;
 import java.util.HashMap;

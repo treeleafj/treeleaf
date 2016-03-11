@@ -1,4 +1,4 @@
-package org.treeleaf.wechat.entity;
+package org.treeleaf.wechat.js.entity;
 
 /**
  * 使用微信网页跳转授权后返回的code去请求accesstoken返回的数据
