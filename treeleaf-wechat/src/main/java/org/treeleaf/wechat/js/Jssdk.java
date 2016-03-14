@@ -9,9 +9,7 @@ import org.treeleaf.common.safe.Sha;
 import org.treeleaf.common.safe.Uuid;
 import org.treeleaf.wechat.js.entity.*;
 
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 微信js sdk接口调用封装
@@ -118,6 +116,32 @@ public class Jssdk {
                 .get();
         log.info("调用微信获取已关注用户信息接口,返回:{}", s);
         return Jsoner.toObj(s, UserInfo.class);
+    }
+
+    /**
+     * 批量获取已关注了公众号的微信用户信息
+     *
+     * @param access_token 微信js sdk的access_token
+     * @param openids       已关注公众号的微信用户openid
+     * @return
+     */
+    public UserInfos userinfos(String access_token, List<String> openids) {
+
+        Map data = new HashMap<>();
+        List user_list = new ArrayList<>(openids.size());
+        openids.forEach(c -> {
+            Map temp = new HashMap();
+            temp.put("openid", c);
+            temp.put("lang", "zh-CN");
+            user_list.add(temp);
+        });
+        data.put("user_list", user_list);
+
+        String s = new Post("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=" + access_token)
+                .body(Jsoner.toJson(data))
+                .post();
+        log.info("调用微信批量获取已关注用户信息接口,返回:{}", s);
+        return Jsoner.toObj(s, UserInfos.class);
     }
 
     /**
