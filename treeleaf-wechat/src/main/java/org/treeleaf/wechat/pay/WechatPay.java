@@ -157,12 +157,13 @@ public class WechatPay {
         String signType = "MD5";
         String pk = "prepay_id=" + orderResult.getPrepay_id();
 
-        Map<String, String> model = new HashMap<>();
         String timestamp = String.valueOf(Maths.divide(Double.valueOf(System.currentTimeMillis()), 1000D).intValue());
+        String nonce = Uuid.buildBase64UUID();
 
+        Map<String, String> model = new HashMap<>();
         model.put("appId", this.appid);
         model.put("timeStamp", timestamp);
-        model.put("nonceStr", Uuid.buildBase64UUID());
+        model.put("nonceStr", nonce);
         model.put("package", pk);
         model.put("signType", signType);
 
@@ -171,7 +172,7 @@ public class WechatPay {
         JsapiParam jsapiParam = new JsapiParam();
         jsapiParam.setAppId(this.appid);
         jsapiParam.setTimeStamp(timestamp);
-        jsapiParam.setNonceStr(Uuid.buildBase64UUID());
+        jsapiParam.setNonceStr(nonce);
         jsapiParam.setPk(pk);
         jsapiParam.setSignType(signType);
         jsapiParam.setPaySign(sign);//签名
