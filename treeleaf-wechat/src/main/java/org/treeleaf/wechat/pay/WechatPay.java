@@ -32,7 +32,7 @@ import java.util.Map;
  * @Author leaf
  * 2016/3/11 0011 20:52.
  */
-public class WechatPay {
+public class WechatPay extends WechatMerchantInterface {
 
     private static Logger log = LoggerFactory.getLogger(WechatPay.class);
 
@@ -57,11 +57,6 @@ public class WechatPay {
      * 商户密钥
      */
     private String key;
-
-    /**
-     * 公众号的appsecret
-     */
-    private String secret;
 
     /**
      * 微信统一下单
@@ -112,7 +107,7 @@ public class WechatPay {
             returnMap.remove("sign");
             String s = WechatPaySignature.sign(returnMap, this.key);
             if (StringUtils.isBlank(returnSign) || !s.equals(returnSign)) {
-                throw new WechatPayException("验签失败:" + returnSign + "," + s);
+                throw new WechatPayException("微信同意下单返回数据验签失败:" + returnSign + "," + s);
             }
         }
 
@@ -180,63 +175,6 @@ public class WechatPay {
         return jsapiParam;
     }
 
-    /**
-     * 将map对象转为微信需要的xml格式
-     *
-     * @param map
-     * @return
-     */
-    protected String mapToXml(Map<String, String> map) {
-        //将数据转为xml
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("xml");
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (StringUtils.isNotEmpty(entry.getValue())) {
-                root.addElement(entry.getKey()).addText(entry.getValue());
-            }
-        }
-
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        format.setIndent(true);
-        format.setSuppressDeclaration(true);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        XMLWriter output = null;
-        try {
-            output = new XMLWriter(outputStream, format);
-            output.write(document);
-            output.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            return outputStream.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("微信返回的数据转为UTF-8失败", e);
-        }
-    }
-
-    /**
-     * 将微信返回的xml解析成map对象
-     *
-     * @param xml
-     * @return
-     */
-    protected Map<String, String> xmlToMap(String xml) {
-        Document document;
-        try {
-            document = DocumentHelper.parseText(xml);
-        } catch (DocumentException e) {
-            throw new RuntimeException("解析的xml格式不正确:\n" + xml, e);
-        }
-        Element root = document.getRootElement();
-        List<Element> list = root.elements();
-        Map<String, String> map = new HashMap<>();
-        for (Element item : list) {
-            map.put(item.getName(), item.getText());
-        }
-        return map;
-    }
-
     public void setAppid(String appid) {
         this.appid = appid;
     }
@@ -249,7 +187,4 @@ public class WechatPay {
         this.key = key;
     }
 
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
 }
