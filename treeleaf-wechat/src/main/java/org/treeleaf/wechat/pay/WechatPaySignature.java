@@ -38,6 +38,7 @@ public class WechatPaySignature {
 
         String result = sb.toString();
         result += "key=" + key;
+        log.info("签名原窜:{}", result);
         result = Hex.md5(result).toUpperCase();
 
         return result;
@@ -54,12 +55,16 @@ public class WechatPaySignature {
     }
 
     private static List<String> obj2List(Object o) {
-        List<String> list = new ArrayList<>();
         Class cls = o.getClass();
         Field[] fields = cls.getDeclaredFields();
 
+        List<String> list = new ArrayList<>(fields.length);
+
         try {
             for (Field f : fields) {
+                if (f.getName().equals("class")) {
+                    continue;
+                }
                 f.setAccessible(true);
                 if (f.get(o) != null && !"".equals(f.get(o))) {
                     list.add(f.getName() + "=" + f.get(o) + "&");
