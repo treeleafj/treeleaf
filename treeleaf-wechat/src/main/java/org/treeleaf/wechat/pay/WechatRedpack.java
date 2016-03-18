@@ -1,33 +1,18 @@
 package org.treeleaf.wechat.pay;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treeleaf.common.bean.FastBeanUtils;
+import org.treeleaf.common.http.BrowserCompatHostnameVerifier;
 import org.treeleaf.common.http.Http;
+import org.treeleaf.common.http.PKC12SslSocketFacotryBuilder;
 import org.treeleaf.common.http.Post;
 import org.treeleaf.common.safe.Uuid;
 import org.treeleaf.wechat.pay.entity.GroupRedpack;
 import org.treeleaf.wechat.pay.entity.Redpack;
 import org.treeleaf.wechat.pay.entity.RedpackResult;
 
-import javax.net.ssl.SSLContext;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.KeyStore;
+import javax.net.ssl.SSLSocketFactory;
 import java.util.Map;
 
 /**
@@ -38,6 +23,8 @@ import java.util.Map;
 public class WechatRedpack extends WechatMerchantInterface {
 
     private static Logger log = LoggerFactory.getLogger(WechatRedpack.class);
+
+    private transient static SSLSocketFactory sslSocketFactory = null;
 
     /**
      * 应用id
@@ -86,52 +73,13 @@ public class WechatRedpack extends WechatMerchantInterface {
         log.info("生成微信发送定额红包接口参数:\n{}", xml);
 
         //4.发送
-//        String r = new Post("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack")
-//                .header(Http.NAME_CONTENT_TYPE, Http.CONTENT_TYPE_XML)
-//                .body(xml).post();
+        String r = new Post("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack")
+                .header(Http.NAME_CONTENT_TYPE, Http.CONTENT_TYPE_XML)
+                .sslSocketFactory(getSslSocketFactory(this.certPath, this.merchantNo))
+                .hostnameVerifier(new BrowserCompatHostnameVerifier())
+                .body(xml).post();
 
-
-        SSLConnectionSocketFactory sslsf = this.buildSslContext();
-
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .build();
-
-        HttpPost httpPost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack");
-        httpPost.setEntity(new StringEntity(xml, ContentType.TEXT_XML.withCharset("UTF-8")));
-
-
-        CloseableHttpResponse response = null;
-
-        String r = null;
-        try {
-            response = httpclient.execute(httpPost);
-
-            HttpEntity entity = response.getEntity();
-
-            if (entity != null) {
-                r = EntityUtils.toString(entity, "UTF-8");
-                log.info("调用微信定额红包接口成功,返回:\n{}", r);
-            }
-
-            EntityUtils.consume(entity);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    log.error("关闭httpclient response失败", e);
-                }
-            }
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                log.error("关闭httpclient失败", e);
-            }
-        }
+        log.info("调用微信定额红包接口成功,返回:\n{}", r);
 
         //5.将从API返回的XML数据映射到Java对象
         Map returnMap = this.xmlToMap(r);
@@ -139,7 +87,6 @@ public class WechatRedpack extends WechatMerchantInterface {
         RedpackResult redpackResult = FastBeanUtils.fastPopulate(RedpackResult.class, returnMap);
 
         //7.验签就不用了,微信文档坑爹,根本就没返回签名字段...
-
         return redpackResult;
     }
 
@@ -170,52 +117,12 @@ public class WechatRedpack extends WechatMerchantInterface {
         log.info("生成微信发送裂变红包接口参数:\n{}", xml);
 
         //4.发送
-//        String r = new Post("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack")
-//                .header(Http.NAME_CONTENT_TYPE, Http.CONTENT_TYPE_XML)
-//                .body(xml).post();
-
-
-        SSLConnectionSocketFactory sslsf = this.buildSslContext();
-
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .build();
-
-        HttpPost httpPost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack");
-        httpPost.setEntity(new StringEntity(xml, ContentType.TEXT_XML.withCharset("UTF-8")));
-
-
-        CloseableHttpResponse response = null;
-
-        String r = null;
-        try {
-            response = httpclient.execute(httpPost);
-
-            HttpEntity entity = response.getEntity();
-
-            if (entity != null) {
-                r = EntityUtils.toString(entity, "UTF-8");
-                log.info("调用微信裂变红包接口成功,返回:\n{}", r);
-            }
-
-            EntityUtils.consume(entity);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    log.error("关闭httpclient response失败", e);
-                }
-            }
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                log.error("关闭httpclient失败", e);
-            }
-        }
+        String r = new Post("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack")
+                .header(Http.NAME_CONTENT_TYPE, Http.CONTENT_TYPE_XML)
+                .sslSocketFactory(getSslSocketFactory(this.certPath, this.merchantNo))
+                .hostnameVerifier(new BrowserCompatHostnameVerifier())
+                .body(xml).post();
+        log.info("调用微信裂变红包接口成功,返回:\n{}", r);
 
         //5.将从API返回的XML数据映射到Java对象
         Map returnMap = this.xmlToMap(r);
@@ -227,31 +134,15 @@ public class WechatRedpack extends WechatMerchantInterface {
         return redpackResult;
     }
 
-    private SSLConnectionSocketFactory buildSslContext() {
-        InputStream in = null;
-        try {
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            in = Files.newInputStream(Paths.get(this.certPath));
-            keyStore.load(in, this.merchantNo.toCharArray());
-
-            // Trust own CA and all self-signed certs
-            SSLContext sslcontext = SSLContexts.custom()
-                    .loadKeyMaterial(keyStore, this.merchantNo.toCharArray())
-                    .build();
-            // Allow TLSv1 protocol only
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                    sslcontext,
-                    new String[]{"TLSv1"},
-                    null,
-                    SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-
-            return sslsf;
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(in);
+    private static SSLSocketFactory getSslSocketFactory(String certPath, String password) {
+        if (sslSocketFactory == null) {
+            synchronized (WechatRedpack.class) {
+                if (sslSocketFactory == null) {
+                    sslSocketFactory = new PKC12SslSocketFacotryBuilder(certPath, password).build();
+                }
+            }
         }
+        return sslSocketFactory;
     }
 
     public void setAppid(String appid) {

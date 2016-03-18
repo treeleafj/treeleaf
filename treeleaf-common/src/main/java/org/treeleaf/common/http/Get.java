@@ -2,7 +2,8 @@ package org.treeleaf.common.http;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.InputStream;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,16 @@ public class Get {
 
     public Get header(String name, String val) {
         httpGet.addHeader(name, val);
+        return this;
+    }
+
+    public Get hostnameVerifier(HostnameVerifier hostnameVerifier) {
+        httpGet.setHostnameVerifier(hostnameVerifier);
+        return this;
+    }
+
+    public Get sslSocketFactory(SSLSocketFactory sslSocketFactory) {
+        httpGet.setSslSocketFactory(sslSocketFactory);
         return this;
     }
 

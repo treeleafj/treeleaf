@@ -2,9 +2,7 @@ package org.treeleaf.common.http;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
+import javax.net.ssl.*;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -28,6 +26,10 @@ public class Http extends HttpConnectionAttr {
 
     private static final String CHARSET = "UTF-8";
 
+    private SSLSocketFactory sslSocketFactory;
+
+    private HostnameVerifier hostnameVerifier;
+
     /**
      * 根据是否采用ssl加密获取对应的HtppURLConnection实例
      *
@@ -37,13 +39,21 @@ public class Http extends HttpConnectionAttr {
      */
     protected HttpURLConnection getHttpURLConnection(URL url) throws Exception {
         if (this.isSsl()) {
-            SSLContext sc = SSLContext.getInstance("TLSv1.2");
-            sc.init(null, new TrustManager[]{new TrustAnyTrustManager()},
-                    new java.security.SecureRandom());
+
+            if (sslSocketFactory == null) {
+                SSLContext sc = SSLContext.getInstance("TLSv1.2");
+                sc.init(null, new TrustManager[]{new TrustAnyTrustManager()},
+                        new java.security.SecureRandom());
+                this.sslSocketFactory = sc.getSocketFactory();
+            }
+
+            if (this.hostnameVerifier == null) {
+                this.hostnameVerifier = new TrustAnyHostnameVerifier();
+            }
 
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            conn.setSSLSocketFactory(sc.getSocketFactory());
-            conn.setHostnameVerifier(new TrustAnyHostnameVerifier());
+            conn.setSSLSocketFactory(this.sslSocketFactory);
+            conn.setHostnameVerifier(this.hostnameVerifier);
             return conn;
         }
         return (HttpURLConnection) url.openConnection();
@@ -86,4 +96,11 @@ public class Http extends HttpConnectionAttr {
         }
     }
 
+    public void setSslSocketFactory(SSLSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
+    }
+
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
 }

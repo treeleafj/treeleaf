@@ -2,6 +2,8 @@ package org.treeleaf.common.http;
 
 import org.apache.commons.lang3.StringUtils;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,21 +68,21 @@ public class Post {
         return this;
     }
 
+    public Post hostnameVerifier(HostnameVerifier hostnameVerifier) {
+        httpPost.setHostnameVerifier(hostnameVerifier);
+        return this;
+    }
+
+    public Post sslSocketFactory(SSLSocketFactory sslSocketFactory) {
+        httpPost.setSslSocketFactory(sslSocketFactory);
+        return this;
+    }
+
     public String post() {
         return httpPost.post();
     }
 
     public void post(OutputStream out) {
         httpPost.post(out);
-    }
-
-    public static void main(String[] args) {
-
-        Map<String, String> param = new HashMap<>();
-        param.put("a", "3");
-        param.put("b", "3");
-
-        String r = new Post("https://www.baidu.com").params(param).post();
-        System.out.println(r);
     }
 }
