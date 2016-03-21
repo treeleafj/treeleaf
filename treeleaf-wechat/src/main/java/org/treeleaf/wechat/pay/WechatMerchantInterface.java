@@ -26,7 +26,7 @@ public abstract class WechatMerchantInterface {
      * @param map
      * @return
      */
-    protected String mapToXml(Map<String, String> map) {
+    public static String mapToXml(Map<String, String> map) {
         //将数据转为xml
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("xml");
@@ -61,7 +61,7 @@ public abstract class WechatMerchantInterface {
      * @param xml
      * @return
      */
-    protected Map<String, String> xmlToMap(String xml) {
+    public static Map<String, String> xmlToMap(String xml) {
         Document document;
         try {
             document = DocumentHelper.parseText(xml);
@@ -76,6 +76,4 @@ public abstract class WechatMerchantInterface {
         }
         return map;
     }
-
-
 }
