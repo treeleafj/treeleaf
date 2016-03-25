@@ -77,7 +77,7 @@ public class ClientInfoHandlerMethodArgumentResolver implements HandlerMethodArg
             return true;
         }
 
-        String userAgent = StringUtils.defaultString(request.getHeader("USER-AGENT").toLowerCase());
+        String userAgent = StringUtils.defaultString(request.getHeader("USER-AGENT")).toLowerCase();
 
         // 匹配
         return phonePat.matcher(userAgent).find() || tablePat.matcher(userAgent).find();
