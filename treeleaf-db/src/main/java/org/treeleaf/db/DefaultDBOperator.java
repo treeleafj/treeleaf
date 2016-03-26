@@ -2,6 +2,7 @@ package org.treeleaf.db;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
+import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,13 @@ public abstract class DefaultDBOperator implements DBModelOperator {
         Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
 
         try {
-            return (List<T>) queryRunner.query(conn, sql, new AnnotationBeanListHandler(modelType), params);
+            if (Model.class.isAssignableFrom(modelType)) {
+                return (List<T>) queryRunner.query(conn, sql, new AnnotationBeanListHandler(modelType), params);
+            } else if (Map.class.isAssignableFrom(modelType)) {
+                return (List<T>) queryRunner.query(conn, sql, new MapListHandler(), params);
+            } else {
+                throw new RuntimeException("未知的映射类型:" + modelType);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
