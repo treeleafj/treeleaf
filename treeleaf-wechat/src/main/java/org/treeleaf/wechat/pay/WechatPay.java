@@ -107,7 +107,7 @@ public class WechatPay extends WechatMerchantInterface {
             returnMap.remove("sign");
             String s = WechatPaySignature.sign(returnMap, this.key);
             if (StringUtils.isBlank(returnSign) || !s.equals(returnSign)) {
-                throw new WechatPayException("微信同意下单返回数据验签失败:" + returnSign + "," + s);
+                throw new WechatPayException("微信统一下单返回数据验签失败:" + returnSign + "," + s);
             }
         }
 
