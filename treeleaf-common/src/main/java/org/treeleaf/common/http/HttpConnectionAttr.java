@@ -45,6 +45,11 @@ public abstract class HttpConnectionAttr {
      */
     private boolean ssl = false;
 
+    /**
+     * 是否重新尝试
+     */
+    private boolean retry;
+
     public void addHeader(String name, String value) {
         this.header.addHeader(name, value);
     }
@@ -53,60 +58,75 @@ public abstract class HttpConnectionAttr {
         return this.getHeader().getHeader(name);
     }
 
-    public void setHeader(HttpHeader header) {
-        this.header = header;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public HttpHeader getHeader() {
-        return header;
-    }
-
-    public Map<String, String> getParam() {
-        return param;
-    }
-
-    public void setParam(Map<String, String> param) {
-        this.param = param;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
     public int getConnectTimeout() {
         return connectTimeout;
     }
 
-    public void setConnectTimeout(int connectTimeout) {
+    public HttpConnectionAttr setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
+        return this;
     }
 
     public int getReadTimeout() {
         return readTimeout;
     }
 
-    public void setReadTimeout(int readTimeout) {
+    public HttpConnectionAttr setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+        return this;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public HttpConnectionAttr setEncoding(String encoding) {
+        this.encoding = encoding;
+        return this;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public HttpConnectionAttr setAddress(String address) {
+        this.address = address;
+        return this;
+    }
+
+    public HttpHeader getHeader() {
+        return header;
+    }
+
+    public HttpConnectionAttr setHeader(HttpHeader header) {
+        this.header = header;
+        return this;
+    }
+
+    public Map<String, String> getParam() {
+        return param;
+    }
+
+    public HttpConnectionAttr setParam(Map<String, String> param) {
+        this.param = param;
+        return this;
     }
 
     public boolean isSsl() {
         return ssl;
     }
 
-    public void setSsl(boolean ssl) {
+    public HttpConnectionAttr setSsl(boolean ssl) {
         this.ssl = ssl;
+        return this;
     }
 
+    public boolean isRetry() {
+        return retry;
+    }
+
+    public HttpConnectionAttr setRetry(boolean retry) {
+        this.retry = retry;
+        return this;
+    }
 }

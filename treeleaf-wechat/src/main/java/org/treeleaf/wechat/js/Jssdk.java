@@ -35,7 +35,7 @@ public class Jssdk {
      *
      * @return
      */
-    public AccessToken access_token() {
+    public AccessToken access_token(boolean ... retry) {
         String s = new Get("https://api.weixin.qq.com/cgi-bin/token")
                 .param("grant_type", "client_credential")
                 .param("appid", appid)

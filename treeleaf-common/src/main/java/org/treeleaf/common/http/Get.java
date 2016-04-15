@@ -73,12 +73,12 @@ public class Get {
         return this;
     }
 
-    public String get() {
-        return httpGet.get();
+    public String get(boolean... retry) {
+        return httpGet.get(retry);
     }
 
-    public void get(OutputStream out) {
-        httpGet.get(out);
+    public void get(OutputStream out, boolean... retry) {
+        httpGet.get(out, retry);
     }
 
     public static void main(String[] args) {
@@ -87,7 +87,7 @@ public class Get {
         param.put("a", "3");
         param.put("b", "3");
 
-        String r = new Get("https://www.baidu.com").params(param).get();
+        String r = new Post("http://localhost:8081/products/list.json").params(param).post(true);
         System.out.println(r);
     }
 }

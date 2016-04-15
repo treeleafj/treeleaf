@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 /**
@@ -26,9 +27,9 @@ public class HttpGet extends Http {
      * @return
      * @throws org.treeleaf.common.http.HttpException
      */
-    public String get() {
+    public String get(boolean... retry) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        get(out);
+        get(out, retry);
         try {
             return out.toString(this.getEncoding());
         } catch (UnsupportedEncodingException e) {
@@ -42,7 +43,7 @@ public class HttpGet extends Http {
      * @return
      * @throws org.treeleaf.common.http.HttpException
      */
-    public void get(OutputStream out) {
+    public void get(OutputStream out, boolean... retry) {
 
         String address = this.getAddress();
 
@@ -55,26 +56,58 @@ public class HttpGet extends Http {
         InputStream in = null;
 
         try {
-            URL url = new URL(address);
 
-            // 打开和URL之间的连接
-            conn = getHttpURLConnection(url);
+            try {
+                URL url = new URL(address);
 
-            conn.setConnectTimeout(this.getConnectTimeout());
-            conn.setReadTimeout(this.getReadTimeout());
-            conn.setRequestMethod("GET");
+                // 打开和URL之间的连接
+                conn = getHttpURLConnection(url);
 
-            // 设置的请求属性
-            for (String name : this.getHeader()) {
-                conn.setRequestProperty(name, this.getHeader().getHeader(name));
+                conn.setConnectTimeout(this.getConnectTimeout());
+                conn.setReadTimeout(this.getReadTimeout());
+                conn.setRequestMethod("GET");
+
+                // 设置的请求属性
+                for (String name : this.getHeader()) {
+                    conn.setRequestProperty(name, this.getHeader().getHeader(name));
+                }
+
+                conn.connect();// 建立实际的连接
+
+                // 定义 BufferedReader 输入流来读取URL的响应
+                in = conn.getInputStream();
+
+                IOUtils.copy(in, out);
+            } catch (SocketTimeoutException ste) {
+                if (retry.length > 0 && retry[0]) {
+                    log.warn("调用{}失败:{},进行重复尝试", address, ste.getMessage());
+
+                    IOUtils.closeQuietly(in);
+
+                    URL url = new URL(address);
+
+                    // 打开和URL之间的连接
+                    conn = getHttpURLConnection(url);
+
+                    conn.setConnectTimeout(this.getConnectTimeout());
+                    conn.setReadTimeout(this.getReadTimeout());
+                    conn.setRequestMethod("GET");
+
+                    // 设置的请求属性
+                    for (String name : this.getHeader()) {
+                        conn.setRequestProperty(name, this.getHeader().getHeader(name));
+                    }
+
+                    conn.connect();// 建立实际的连接
+
+                    // 定义 BufferedReader 输入流来读取URL的响应
+                    in = conn.getInputStream();
+
+                    IOUtils.copy(in, out);
+                } else {
+                    throw ste;
+                }
             }
-
-            conn.connect();// 建立实际的连接
-
-            // 定义 BufferedReader 输入流来读取URL的响应
-            in = conn.getInputStream();
-
-            IOUtils.copy(in, out);
 
         } catch (Exception e) {
 

@@ -10,11 +10,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 /**
  * Http Post请求
- * <p/>
+ * <p>
  * Created by yaoshuhong on 2015/6/29.
  */
 public class HttpPost extends Http {
@@ -32,9 +33,9 @@ public class HttpPost extends Http {
      * @return
      * @throws org.treeleaf.common.http.HttpException
      */
-    public String post() {
+    public String post(boolean... retry) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        post(out);
+        post(out, retry);
         try {
             return out.toString(getEncoding());
         } catch (UnsupportedEncodingException e) {
@@ -47,7 +48,7 @@ public class HttpPost extends Http {
      *
      * @param out
      */
-    public void post(OutputStream out) {
+    public void post(OutputStream out, boolean... retry) {
 
         String paramStr = "";
 
@@ -62,30 +63,68 @@ public class HttpPost extends Http {
         HttpURLConnection conn = null;
 
         try {
-            URL url = new URL(this.getAddress());
-            // 打开和URL之间的连接
-            conn = getHttpURLConnection(url);
 
-            conn.setAllowUserInteraction(false);
-            conn.setUseCaches(false);
-            conn.setRequestMethod("POST");
-            conn.setConnectTimeout(this.getConnectTimeout());
-            conn.setReadTimeout(this.getReadTimeout());
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
+            try {
 
-            // 设置的请求属性
-            for (String name : this.getHeader()) {
-                conn.setRequestProperty(name, this.getHeader().getHeader(name));
+                URL url = new URL(this.getAddress());
+                // 打开和URL之间的连接
+                conn = getHttpURLConnection(url);
+
+                conn.setAllowUserInteraction(false);
+                conn.setUseCaches(false);
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(this.getConnectTimeout());
+                conn.setReadTimeout(this.getReadTimeout());
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+
+                // 设置的请求属性
+                for (String name : this.getHeader()) {
+                    conn.setRequestProperty(name, this.getHeader().getHeader(name));
+                }
+
+                out2 = conn.getOutputStream();
+
+                IOUtils.write(paramStr, out2, this.getEncoding());
+
+                in = conn.getInputStream();
+
+                IOUtils.copy(in, out);
+            } catch (SocketTimeoutException ste) {
+                if (retry.length > 0 && retry[0]) {
+                    log.warn("调用{}失败:{},进行重复尝试", this.getAddress(), ste.getMessage());
+
+                    IOUtils.closeQuietly(in);
+                    IOUtils.closeQuietly(out2);
+
+                    URL url = new URL(this.getAddress());
+                    // 打开和URL之间的连接
+                    conn = getHttpURLConnection(url);
+
+                    conn.setAllowUserInteraction(false);
+                    conn.setUseCaches(false);
+                    conn.setRequestMethod("POST");
+                    conn.setConnectTimeout(this.getConnectTimeout());
+                    conn.setReadTimeout(this.getReadTimeout());
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+
+                    // 设置的请求属性
+                    for (String name : this.getHeader()) {
+                        conn.setRequestProperty(name, this.getHeader().getHeader(name));
+                    }
+
+                    out2 = conn.getOutputStream();
+
+                    IOUtils.write(paramStr, out2, this.getEncoding());
+
+                    in = conn.getInputStream();
+
+                    IOUtils.copy(in, out);
+                } else {
+                    throw ste;
+                }
             }
-
-            out2 = conn.getOutputStream();
-
-            IOUtils.write(paramStr, out2, this.getEncoding());
-
-            in = conn.getInputStream();
-
-            IOUtils.copy(in, out);
 
         } catch (Exception e) {
             throw new HttpException("post方式请求远程地址失败", e);

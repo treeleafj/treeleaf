@@ -78,11 +78,11 @@ public class Post {
         return this;
     }
 
-    public String post() {
-        return httpPost.post();
+    public String post(boolean... retry) {
+        return httpPost.post(retry);
     }
 
-    public void post(OutputStream out) {
-        httpPost.post(out);
+    public void post(OutputStream out, boolean... retry) {
+        httpPost.post(out, retry);
     }
 }
