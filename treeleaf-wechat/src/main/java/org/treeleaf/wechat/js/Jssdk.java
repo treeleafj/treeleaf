@@ -40,7 +40,7 @@ public class Jssdk {
                 .param("grant_type", "client_credential")
                 .param("appid", appid)
                 .param("secret", secret)
-                .get();
+                .get(true);
 
         log.info("调用微信获取accessToken接口,返回:{}", s);
 
@@ -95,7 +95,7 @@ public class Jssdk {
                 .param("access_token", access_token)
                 .param("openid", openid)
                 .param("lang", "zh_CN")
-                .post();
+                .post(true);
 
         log.info("调用微信获取已授权用户基本信息接口,返回:{}", result);
         return Jsoner.toObj(result, SnsUserInfo.class);
@@ -113,7 +113,7 @@ public class Jssdk {
                 .param("access_token", access_token)
                 .param("openid", openid)
                 .param("lang", "zh_CN")
-                .get();
+                .get(true);
         log.info("调用微信获取已关注用户信息接口,返回:{}", s);
         return Jsoner.toObj(s, UserInfo.class);
     }
@@ -139,7 +139,7 @@ public class Jssdk {
 
         String s = new Post("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=" + access_token)
                 .body(Jsoner.toJson(data))
-                .post();
+                .post(true);
         log.info("调用微信批量获取已关注用户信息接口,返回:{}", s);
         return Jsoner.toObj(s, UserInfos.class);
     }
