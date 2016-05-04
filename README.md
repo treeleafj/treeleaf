@@ -1,6 +1,6 @@
 # ❦ treeleaf 树叶-java框架
 ## treeleaf-cache 缓存框架
-    提供基于redis和本地内存两种缓存操作封装(继承连接池)
+    提供基于redis和本地内存两种缓存操作封装(集成连接池)
 ```java
     CacheConfig cacheConfig = new CacheConfig();
     cacheConfig.setType(0);//设置缓存类型,0为redis,1为本地缓存
