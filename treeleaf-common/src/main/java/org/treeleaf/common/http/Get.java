@@ -1,93 +1,126 @@
 package org.treeleaf.common.http;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 
 /**
- * Created by yaoshuhong on 2016/3/4.
+ * 封装HttpGet, 提供更精简的Api操作
+ *
+ * @author yaoshuhong
+ * @date 2016-06-21 16:24
  */
-public class Get {
+public class Get extends Http<Get> {
 
-    private HttpGet httpGet = new HttpGet();
+    private static Logger log = LoggerFactory.getLogger(Get.class);
 
-    public Get(String addr) {
-        boolean isSsl = StringUtils.startsWithIgnoreCase(addr, "https");
-        httpGet.setSsl(isSsl);
-        httpGet.setAddress(addr);
+    /**
+     * 构建Get请求对象
+     *
+     * @param address 请求地址,可以是http或者https
+     */
+    public Get(String address) {
+        super(address);
     }
 
-    public Get params(Map<String, String> param) {
-        if (httpGet.getParam() == null || httpGet.getParam().isEmpty()) {
-            httpGet.setParam(param);
-        } else {
-            httpGet.getParam().putAll(param);
+    public String send() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        this.send(out);
+        try {
+            return out.toString(this.encoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("将返回数据转移为" + encoding + "失败", e);
         }
-        return this;
     }
 
-    public Get param(String name, String value) {
-        if (httpGet.getParam() == null) {
-            httpGet.setParam(new HashMap<>());
+    public void send(OutputStream out) {
+
+        String address = this.address;
+
+        //组装参数
+        if (this.param != null && !this.param.isEmpty()) {
+            address += ("?" + Http.param2UrlParam(this.param));
         }
-        httpGet.getParam().put(name, value);
-        return this;
-    }
 
-    public Get connectTimeout(int t) {
-        httpGet.setConnectTimeout(t);
-        return this;
-    }
+        HttpURLConnection conn = null;
+        InputStream in = null;
 
-    public Get readTimeout(int t) {
-        httpGet.setReadTimeout(t);
-        return this;
-    }
+        try {
 
-    public Get encoding(String encoding) {
-        httpGet.setEncoding(encoding);
-        return this;
-    }
+            try {
+                URL url = new URL(address);
 
-    public Get header(HttpHeader header) {
-        httpGet.setHeader(header);
-        return this;
-    }
+                // 打开和URL之间的连接
+                conn = this.buildHttpURLConnection(url);
 
-    public Get header(String name, String val) {
-        httpGet.addHeader(name, val);
-        return this;
-    }
+                conn.setConnectTimeout(this.connectTimeout);
+                conn.setReadTimeout(this.readTimeout);
+                conn.setRequestMethod("GET");
 
-    public Get hostnameVerifier(HostnameVerifier hostnameVerifier) {
-        httpGet.setHostnameVerifier(hostnameVerifier);
-        return this;
-    }
+                // 设置的请求属性
+                for (String name : this.header) {
+                    conn.setRequestProperty(name, this.header.getHeader(name));
+                }
 
-    public Get sslSocketFactory(SSLSocketFactory sslSocketFactory) {
-        httpGet.setSslSocketFactory(sslSocketFactory);
-        return this;
-    }
+                conn.connect();// 建立实际的连接
 
-    public String get(boolean... retry) {
-        return httpGet.get(retry);
-    }
+                //读取URL的响应
+                in = conn.getInputStream();
 
-    public void get(OutputStream out, boolean... retry) {
-        httpGet.get(out, retry);
-    }
+                IOUtils.copy(in, out);
+            } catch (SocketTimeoutException ste) {
+                if (this.retry) {
+                    log.warn("调用{}失败:{},进行重复尝试", address, ste.getMessage());
 
-    public static void main(String[] args) {
+                    IOUtils.closeQuietly(in);
 
-        Map<String, String> param = new HashMap<>();
-        param.put("a", "3");
-        param.put("b", "3");
+                    URL url = new URL(address);
 
-        String r = new Post("http://localhost:8081/products/list.json").params(param).post(true);
-        System.out.println(r);
+                    // 打开和URL之间的连接
+                    conn = this.buildHttpURLConnection(url);
+
+                    conn.setConnectTimeout(this.connectTimeout);
+                    conn.setReadTimeout(this.readTimeout);
+                    conn.setRequestMethod("GET");
+
+                    // 设置的请求属性
+                    for (String name : this.header) {
+                        conn.setRequestProperty(name, this.header.getHeader(name));
+                    }
+
+                    conn.connect();// 建立实际的连接
+
+                    //读取URL的响应
+                    in = conn.getInputStream();
+
+                    IOUtils.copy(in, out);
+                } else {
+                    throw ste;
+                }
+            }
+
+        } catch (Exception e) {
+            throw new HttpException("get方式请求远程地址" + address + "失败", e);
+        } finally {
+
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
+
+            if (conn != null) {
+                try {
+                    conn.disconnect();
+                } catch (Exception e) {
+                    log.warn("关闭HttpURLConnection失败.", e);
+                }
+            }
+        }
     }
 }

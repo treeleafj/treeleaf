@@ -44,7 +44,7 @@ public class IpUtils {
      * @return
      */
     public static IpAddress query(String ip) {
-        String r = new Get("http://ip.taobao.com/service/getIpInfo2.php").param("ip", ip).get();
+        String r = new Get("http://ip.taobao.com/service/getIpInfo2.php").param("ip", ip).send();
         Map result = Jsoner.toObj(r, Map.class);
         if (!"0".equals(String.valueOf(result.get("code")))) {
             throw new ServiceException("查询ip失败," + result.get("data"));

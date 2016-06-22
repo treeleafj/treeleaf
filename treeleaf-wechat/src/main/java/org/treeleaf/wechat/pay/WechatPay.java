@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treeleaf.common.bean.FastBeanUtils;
 import org.treeleaf.common.http.Http;
+import org.treeleaf.common.http.HttpHeader;
 import org.treeleaf.common.http.Post;
 import org.treeleaf.common.safe.Maths;
 import org.treeleaf.common.safe.Uuid;
@@ -89,8 +90,8 @@ public class WechatPay extends WechatMerchantInterface {
 
         //4.发送
         String r = new Post("https://api.mch.weixin.qq.com/pay/unifiedorder")
-                .header(Http.NAME_CONTENT_TYPE, Http.CONTENT_TYPE_XML)
-                .body(xml).post();
+                .header(HttpHeader.NAME_CONTENT_TYPE, HttpHeader.CONTENT_TYPE_XML)
+                .body(xml).send();
 
         log.debug("调用微信统一下单接口成功,返回:\n{}", r);
 

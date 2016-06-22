@@ -3,10 +3,9 @@ package org.treeleaf.wechat.pay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treeleaf.common.bean.FastBeanUtils;
-import org.treeleaf.common.http.BrowserCompatHostnameVerifier;
-import org.treeleaf.common.http.Http;
-import org.treeleaf.common.http.PKC12SslSocketFacotryBuilder;
-import org.treeleaf.common.http.Post;
+import org.treeleaf.common.http.*;
+import org.treeleaf.common.http.ssl.BrowserCompatHostnameVerifier;
+import org.treeleaf.common.http.ssl.PKC12SslSocketFacotryBuilder;
 import org.treeleaf.common.safe.Uuid;
 import org.treeleaf.wechat.pay.entity.GroupRedpack;
 import org.treeleaf.wechat.pay.entity.Redpack;
@@ -74,10 +73,10 @@ public class WechatRedpack extends WechatMerchantInterface {
 
         //4.发送
         String r = new Post("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack")
-                .header(Http.NAME_CONTENT_TYPE, Http.CONTENT_TYPE_XML)
+                .header(HttpHeader.NAME_CONTENT_TYPE, HttpHeader.CONTENT_TYPE_XML)
                 .sslSocketFactory(getSslSocketFactory(this.certPath, this.merchantNo))
                 .hostnameVerifier(new BrowserCompatHostnameVerifier())
-                .body(xml).post();
+                .body(xml).send();
 
         log.info("调用微信定额红包接口成功,返回:\n{}", r);
 
@@ -118,10 +117,10 @@ public class WechatRedpack extends WechatMerchantInterface {
 
         //4.发送
         String r = new Post("https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack")
-                .header(Http.NAME_CONTENT_TYPE, Http.CONTENT_TYPE_XML)
+                .header(HttpHeader.NAME_CONTENT_TYPE, HttpHeader.CONTENT_TYPE_XML)
                 .sslSocketFactory(getSslSocketFactory(this.certPath, this.merchantNo))
                 .hostnameVerifier(new BrowserCompatHostnameVerifier())
-                .body(xml).post();
+                .body(xml).send();
         log.info("调用微信裂变红包接口成功,返回:\n{}", r);
 
         //5.将从API返回的XML数据映射到Java对象
