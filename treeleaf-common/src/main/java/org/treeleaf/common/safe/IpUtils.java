@@ -1,7 +1,8 @@
-package org.treeleaf.common.http;
+package org.treeleaf.common.safe;
 
 import org.apache.commons.io.IOUtils;
 import org.treeleaf.common.exception.ServiceException;
+import org.treeleaf.common.http.basic.Get;
 import org.treeleaf.common.json.Jsoner;
 
 import java.io.IOException;

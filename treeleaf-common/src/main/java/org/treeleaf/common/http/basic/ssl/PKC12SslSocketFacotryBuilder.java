@@ -1,4 +1,4 @@
-package org.treeleaf.common.http.ssl;
+package org.treeleaf.common.http.basic.ssl;
 
 import org.treeleaf.common.safe.Assert;
 

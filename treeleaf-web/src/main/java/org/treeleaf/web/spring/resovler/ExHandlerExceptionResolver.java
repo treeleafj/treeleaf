@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.RedirectView;
-import org.treeleaf.common.http.Http;
+import org.treeleaf.common.http.basic.Http;
 import org.treeleaf.web.Html;
 import org.treeleaf.web.Redirect;
 import org.treeleaf.web.Result;

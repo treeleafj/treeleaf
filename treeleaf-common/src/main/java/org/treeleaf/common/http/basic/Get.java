@@ -1,8 +1,9 @@
-package org.treeleaf.common.http;
+package org.treeleaf.common.http.basic;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treeleaf.common.http.HttpException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

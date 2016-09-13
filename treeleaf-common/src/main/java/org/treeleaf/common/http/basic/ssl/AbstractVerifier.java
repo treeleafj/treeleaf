@@ -1,7 +1,7 @@
-package org.treeleaf.common.http.ssl;
+package org.treeleaf.common.http.basic.ssl;
 
 import org.slf4j.LoggerFactory;
-import org.treeleaf.common.http.InetAddressUtils;
+import org.treeleaf.common.http.basic.InetAddressUtils;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;

@@ -1,6 +1,7 @@
-package org.treeleaf.common.http;
+package org.treeleaf.common.http.basic;
 
 import org.apache.commons.lang3.StringUtils;
+import org.treeleaf.common.http.HttpHeader;
 
 import javax.net.ssl.*;
 import java.io.OutputStream;

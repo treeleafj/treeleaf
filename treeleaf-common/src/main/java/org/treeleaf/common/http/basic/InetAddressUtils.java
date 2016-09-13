@@ -1,4 +1,4 @@
-package org.treeleaf.common.http;
+package org.treeleaf.common.http.basic;
 
 import java.util.regex.Pattern;
 

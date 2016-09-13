@@ -1,4 +1,4 @@
-package org.treeleaf.common.http.ssl;
+package org.treeleaf.common.http.basic.ssl;
 
 import javax.net.ssl.SSLException;
 

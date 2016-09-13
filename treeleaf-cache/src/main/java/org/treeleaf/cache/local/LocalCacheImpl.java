@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class LocalCacheImpl implements Cache {
 
-    private static Map<String, Object> cache = new HashMap<String, Object>();
-    private static Map<String, Map> cacheMap = new HashMap<String, Map>();
-    private static Map<String, List> cacheList = new HashMap<String, List>();
+    private static Map<String, Object> cache = new HashMap<>();
+    private static Map<String, Map> cacheMap = new HashMap<>();
+    private static Map<String, List> cacheList = new HashMap<>();
 
     @Override
     public void set(String key, Object object, int... expireSeconds) throws CacheException {

@@ -8,7 +8,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.view.RedirectView;
-import org.treeleaf.common.http.Http;
+import org.treeleaf.common.http.basic.Http;
 import org.treeleaf.web.Redirect;
 
 /**

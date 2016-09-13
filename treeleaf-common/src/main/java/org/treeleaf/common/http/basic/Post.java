@@ -1,9 +1,10 @@
-package org.treeleaf.common.http;
+package org.treeleaf.common.http.basic;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treeleaf.common.http.HttpException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -126,7 +127,7 @@ public class Post extends Http<Post> {
             }
 
         } catch (Exception e) {
-            throw new HttpException("post方式请求远程地址失败", e);
+            throw new HttpException("post方式请求远程地址" + this.address + "失败", e);
         } finally {
             IOUtils.closeQuietly(out);
             IOUtils.closeQuietly(out2);
