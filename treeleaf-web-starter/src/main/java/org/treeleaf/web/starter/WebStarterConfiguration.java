@@ -41,7 +41,7 @@ public class WebStarterConfiguration {
     @Bean
     public WebMvcConfigurerAdapter configStaticMapping() {
 
-        log.info("配置url");
+        log.info("配置spring-mvc扩展");
 
         return new WebMvcConfigurerAdapter() {
             @Override
