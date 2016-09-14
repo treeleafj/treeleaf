@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.3.2.RELEASE</spring.version>
         <treeleaf.version>1.2.0.SNAPSHOT</treeleaf.version>
@@ -16,6 +17,8 @@
         <module>treeleaf-common</module>
         <module>treeleaf-cache</module>
         <module>treeleaf-db</module>
+        <module>treeleaf-web-starter</module>
+        <module>treeleaf-db-starter</module>
     </modules>
 
     <groupId>org.treeleaf.framework</groupId>
