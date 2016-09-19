@@ -25,6 +25,13 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!--javaee -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!--自动生成META-INF下的配置文件-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

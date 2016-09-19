@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -20,6 +22,7 @@ import org.treeleaf.web.spring.handler.HtmlHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.handler.ParamHandlerMethodArgumentResolver;
 import org.treeleaf.web.spring.handler.RedirectHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.handler.TextHandlerMethodReturnValueHandler;
+import org.treeleaf.web.spring.interceptor.DBConnectionHandlerInterceptor;
 import org.treeleaf.web.spring.interceptor.PrintLogHandlerInerceptor;
 import org.treeleaf.web.spring.resovler.ExHandlerExceptionResolver;
 import org.treeleaf.web.spring.resovler.ExtDefaultExceptionHandler;
@@ -40,9 +43,28 @@ public class WebStarterConfiguration {
     @Autowired
     private WebStarterConfigurationProperties webStarterConfigurationProperties;
 
+//    /**
+//     * 注册字符过滤器
+//     * @return
+//     */
+//    @Bean
+//    public FilterRegistrationBean filterRegistrationBean() {
+//        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+//        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+//        characterEncodingFilter.setForceEncoding(true);
+//        characterEncodingFilter.setEncoding("UTF-8");
+//        registrationBean.setFilter(characterEncodingFilter);
+//        return registrationBean;
+//    }
+
     @Bean
     public PrintLogHandlerInerceptor printLogHandlerInerceptor() {
         return new PrintLogHandlerInerceptor();
+    }
+
+    @Bean
+    public DBConnectionHandlerInterceptor dbConnectionHandlerInterceptor() {
+        return new DBConnectionHandlerInterceptor();
     }
 
     @Bean
@@ -86,14 +108,6 @@ public class WebStarterConfiguration {
         handler.setExExceptionHanlder(extDefaultExceptionHandler());
         return handler;
     }
-
-//    @Bean
-//    public ViewResolver viewResolver() {
-//        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-//        viewResolver.setPrefix(webStarterConfigurationProperties.getPrefix());
-//        viewResolver.setSuffix(webStarterConfigurationProperties.getSuffix());
-//        return viewResolver;
-//    }
 
     @Bean
     public WebMvcConfigurerAdapter configStaticMapping() {
@@ -143,14 +157,9 @@ public class WebStarterConfiguration {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(printLogHandlerInerceptor());
+                registry.addInterceptor(dbConnectionHandlerInterceptor());
                 super.addInterceptors(registry);
             }
-
-//            @Override
-//            public void configureViewResolvers(ViewResolverRegistry registry) {
-//                registry.viewResolver(viewResolver());
-//                super.configureViewResolvers(registry);
-//            }
         };
     }
 }
