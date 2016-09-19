@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -19,6 +20,7 @@ import org.treeleaf.web.spring.handler.HtmlHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.handler.ParamHandlerMethodArgumentResolver;
 import org.treeleaf.web.spring.handler.RedirectHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.handler.TextHandlerMethodReturnValueHandler;
+import org.treeleaf.web.spring.interceptor.PrintLogHandlerInerceptor;
 import org.treeleaf.web.spring.resovler.ExHandlerExceptionResolver;
 import org.treeleaf.web.spring.resovler.ExtDefaultExceptionHandler;
 
@@ -37,6 +39,61 @@ public class WebStarterConfiguration {
 
     @Autowired
     private WebStarterConfigurationProperties webStarterConfigurationProperties;
+
+    @Bean
+    public PrintLogHandlerInerceptor printLogHandlerInerceptor() {
+        return new PrintLogHandlerInerceptor();
+    }
+
+    @Bean
+    public ParamHandlerMethodArgumentResolver paramHandlerMethodArgumentResolver() {
+        return new ParamHandlerMethodArgumentResolver();
+    }
+
+    @Bean
+    public ClientInfoHandlerMethodArgumentResolver clientInfoHandlerMethodArgumentResolver() {
+        return new ClientInfoHandlerMethodArgumentResolver();
+    }
+
+    @Bean
+    public TextHandlerMethodReturnValueHandler textHandlerMethodReturnValueHandler() {
+        return new TextHandlerMethodReturnValueHandler();
+    }
+
+    @Bean
+    public HtmlHandlerMethodReturnValueHandler htmlHandlerMethodReturnValueHandler() {
+        return new HtmlHandlerMethodReturnValueHandler();
+    }
+
+    @Bean
+    public RedirectHandlerMethodReturnValueHandler redirectHandlerMethodReturnValueHandler() {
+        return new RedirectHandlerMethodReturnValueHandler();
+    }
+
+    @Bean
+    public ExtDefaultExceptionHandler extDefaultExceptionHandler() {
+        ExtDefaultExceptionHandler exExceptionHanlder = new ExtDefaultExceptionHandler();
+        exExceptionHanlder.setTip(webStarterConfigurationProperties.getErrorTip());
+        exExceptionHanlder.setErrorView(webStarterConfigurationProperties.getErrorView());
+        exExceptionHanlder.setRedirect(webStarterConfigurationProperties.isErrorRedirect());
+        return exExceptionHanlder;
+    }
+
+    @Bean
+    public ExHandlerExceptionResolver exHandlerExceptionResolver() {
+        ExHandlerExceptionResolver handler = new ExHandlerExceptionResolver();
+        handler.setStatus(200);
+        handler.setExExceptionHanlder(extDefaultExceptionHandler());
+        return handler;
+    }
+
+//    @Bean
+//    public ViewResolver viewResolver() {
+//        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+//        viewResolver.setPrefix(webStarterConfigurationProperties.getPrefix());
+//        viewResolver.setSuffix(webStarterConfigurationProperties.getSuffix());
+//        return viewResolver;
+//    }
 
     @Bean
     public WebMvcConfigurerAdapter configStaticMapping() {
@@ -77,18 +134,23 @@ public class WebStarterConfiguration {
 
                 log.info("treeleaf-web-starter config:{}", Jsoner.toJson(webStarterConfigurationProperties));
 
-                ExtDefaultExceptionHandler exExceptionHanlder = new ExtDefaultExceptionHandler();
-                exExceptionHanlder.setTip(webStarterConfigurationProperties.getErrorTip());
-                exExceptionHanlder.setErrorView(webStarterConfigurationProperties.getErrorView());
-                exExceptionHanlder.setRedirect(webStarterConfigurationProperties.isErrorRedirect());
 
-                ExHandlerExceptionResolver handler = new ExHandlerExceptionResolver();
-                handler.setStatus(200);
-                handler.setExExceptionHanlder(exExceptionHanlder);
-                exceptionResolvers.add(0, handler);
+                exceptionResolvers.add(0, exHandlerExceptionResolver());
 
                 super.configureHandlerExceptionResolvers(exceptionResolvers);
             }
+
+            @Override
+            public void addInterceptors(InterceptorRegistry registry) {
+                registry.addInterceptor(printLogHandlerInerceptor());
+                super.addInterceptors(registry);
+            }
+
+//            @Override
+//            public void configureViewResolvers(ViewResolverRegistry registry) {
+//                registry.viewResolver(viewResolver());
+//                super.configureViewResolvers(registry);
+//            }
         };
     }
 }

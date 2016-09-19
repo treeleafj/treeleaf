@@ -28,6 +28,16 @@ public class WebStarterConfigurationProperties {
      */
     private String errorView = "/error.html";
 
+    /**
+     * 页面存放目录
+     */
+    private String prefix = "/page/";
+
+    /**
+     * 页面默认后缀
+     */
+    private String suffix = ".jsp";
+
     public String getErrorTip() {
         return errorTip;
     }
@@ -52,6 +62,24 @@ public class WebStarterConfigurationProperties {
 
     public WebStarterConfigurationProperties setErrorView(String errorView) {
         this.errorView = errorView;
+        return this;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public WebStarterConfigurationProperties setSuffix(String suffix) {
+        this.suffix = suffix;
+        return this;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public WebStarterConfigurationProperties setPrefix(String prefix) {
+        this.prefix = prefix;
         return this;
     }
 }
