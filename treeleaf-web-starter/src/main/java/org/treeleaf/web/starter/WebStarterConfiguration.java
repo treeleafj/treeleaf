@@ -23,10 +23,12 @@ import org.treeleaf.web.spring.handler.ParamHandlerMethodArgumentResolver;
 import org.treeleaf.web.spring.handler.RedirectHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.handler.TextHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.interceptor.DBConnectionHandlerInterceptor;
+import org.treeleaf.web.spring.interceptor.MultipleHandlerInerceptor;
 import org.treeleaf.web.spring.interceptor.PrintLogHandlerInerceptor;
 import org.treeleaf.web.spring.resovler.ExHandlerExceptionResolver;
 import org.treeleaf.web.spring.resovler.ExtDefaultExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -156,8 +158,12 @@ public class WebStarterConfiguration {
 
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
-                registry.addInterceptor(printLogHandlerInerceptor());
-                registry.addInterceptor(dbConnectionHandlerInterceptor());
+                List list = new ArrayList<>(2);
+                list.add(printLogHandlerInerceptor());
+                list.add(dbConnectionHandlerInterceptor());
+                MultipleHandlerInerceptor multipleHandlerInerceptor = new MultipleHandlerInerceptor();
+                multipleHandlerInerceptor.setHandlers(list);
+                registry.addInterceptor(multipleHandlerInerceptor);
                 super.addInterceptors(registry);
             }
         };
