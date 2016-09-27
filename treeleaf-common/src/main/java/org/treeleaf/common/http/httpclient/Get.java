@@ -49,7 +49,7 @@ public class Get extends Http<Get> {
     public void send(OutputStream out) {
         HttpClient httpClient;
         try {
-            httpClient = super.buildHttpClient();
+            httpClient = buildHttpClient();
         } catch (Exception e) {
             throw new HttpException("get方式请求远程地址" + address + "失败", e);
         }

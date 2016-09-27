@@ -56,7 +56,7 @@ public class Post extends Http<Post> {
     public void send(OutputStream out) {
         HttpClient httpClient;
         try {
-            httpClient = super.buildHttpClient();
+            httpClient = buildHttpClient();
         } catch (Exception e) {
             throw new HttpException("构建httpclient失败");
         }
