@@ -6,15 +6,10 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.treeleaf.common.http.HttpHeader;
 
-import javax.net.ssl.SSLContext;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,27 +100,7 @@ public abstract class Http<T extends Http> {
     public abstract void send(OutputStream out);
 
     protected HttpClient buildHttpClient() throws Exception {
-
-        HttpClientBuilder httpBulder = HttpClients.custom();
-        httpBulder.setConnectionManager(connectionManager);
-
-        if (this.ssl) {//如果采用https的方式
-            if (this.sslSocketFactory == null) {
-                SSLContext sslContext = this.buildDefaultSSLContext();
-                this.sslSocketFactory = new SSLConnectionSocketFactory(sslContext);
-            }
-            httpBulder.setSSLSocketFactory(this.sslSocketFactory);
-        }
-
-        CloseableHttpClient httpClient = httpBulder.build();
-
-        return httpClient;
-    }
-
-    protected SSLContext buildDefaultSSLContext() throws Exception {
-        return new SSLContextBuilder().loadTrustMaterial(null, (chain, authType) -> {
-            return true;//信任所有
-        }).build();
+        return HttpClientFactory.get();
     }
 
     protected HttpUriRequest buildHttpUriRequest(RequestBuilder builder) {
