@@ -22,6 +22,31 @@ import java.util.List;
  */
 public class Jsoner {
 
+    static {
+        // 时间类型转换
+        SerializeConfig.getGlobalInstance().put(Date.class, new SimpleDateFormatSerializer("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    /**
+     * 添加类型转换
+     *
+     * @param classz     要转换的类型
+     * @param serializer 转换器
+     */
+    public static void addSerializeConfig(Class<?> classz, ObjectSerializer serializer) {
+        SerializeConfig.getGlobalInstance().put(classz, serializer);
+    }
+
+    /**
+     * 添加类型解析
+     *
+     * @param type         要解析的类型
+     * @param deserializer 解析器
+     */
+    public static void addDeserializerConfig(Type type, ObjectDeserializer deserializer) {
+        ParserConfig.getGlobalInstance().getGlobalInstance().putDeserializer(type, deserializer);
+    }
+
     /**
      * 将一个对象转为json字符窜 对象最好能继承IJSONObject(可防止相互引用的循环递归)
      */
