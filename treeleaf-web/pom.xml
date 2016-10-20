@@ -13,6 +13,8 @@
 
     <artifactId>treeleaf-web</artifactId>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+
     <dependencies>
         <dependency>
             <groupId>com.github.treeleafj</groupId>
