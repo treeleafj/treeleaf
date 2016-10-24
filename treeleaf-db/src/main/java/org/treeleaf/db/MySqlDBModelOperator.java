@@ -96,6 +96,15 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
     }
 
     @Override
+    public <T extends Model> T findOneByExample(Example example, Class<T> classz, Connection... connection) {
+        List<T> list = this.findByExample(example, classz, connection);
+        if (list.size() > 1) {
+            throw new RuntimeException("指定返回一条数据,却查询出" + list.size() + "条数据!!!");
+        }
+        return list.size() == 1 ? list.get(0) : null;
+    }
+
+    @Override
     public SqlAnalyzer getSqlAnalyzer() {
         return this.sqlAnalyzer;
     }

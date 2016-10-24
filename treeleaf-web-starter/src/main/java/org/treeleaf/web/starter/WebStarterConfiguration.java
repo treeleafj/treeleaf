@@ -45,20 +45,6 @@ public class WebStarterConfiguration {
     @Autowired
     private WebStarterConfigurationProperties webStarterConfigurationProperties;
 
-//    /**
-//     * 注册字符过滤器
-//     * @return
-//     */
-//    @Bean
-//    public FilterRegistrationBean filterRegistrationBean() {
-//        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-//        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-//        characterEncodingFilter.setForceEncoding(true);
-//        characterEncodingFilter.setEncoding("UTF-8");
-//        registrationBean.setFilter(characterEncodingFilter);
-//        return registrationBean;
-//    }
-
     @Bean
     public PrintLogHandlerInerceptor printLogHandlerInerceptor() {
         return new PrintLogHandlerInerceptor();
@@ -114,15 +100,9 @@ public class WebStarterConfiguration {
     @Bean
     public WebMvcConfigurerAdapter configStaticMapping() {
 
-        log.info("配置spring-mvc扩展");
+        log.info("配置treeleaf spring-mvc扩展");
 
         return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addViewControllers(ViewControllerRegistry registry) {
-//                log.info("增加跳转");
-//                //配置跳转
-//                registry.addViewController("/nav").setViewName("forward:/nav.html");
-            }
 
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -146,10 +126,6 @@ public class WebStarterConfiguration {
 
             @Override
             public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-
-
-                log.info("treeleaf-web-starter config:{}", Jsoner.toJson(webStarterConfigurationProperties));
-
 
                 exceptionResolvers.add(0, exHandlerExceptionResolver());
 

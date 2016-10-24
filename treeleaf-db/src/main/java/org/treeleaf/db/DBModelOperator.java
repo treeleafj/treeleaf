@@ -58,6 +58,17 @@ public interface DBModelOperator extends DBOperator {
     <T extends Model> List<T> findByExample(Example example, Class<T> classz, Connection... connection);
 
     /**
+     * 通过表达式查询数据,只返回第一条,如果有多条,则抛出异常
+     *
+     * @param example
+     * @param classz
+     * @param connection
+     * @param <T>
+     * @return
+     */
+    <T extends Model> T findOneByExample(Example example, Class<T> classz, Connection... connection);
+
+    /**
      * 根据表达式统计长度
      *
      * @param example
