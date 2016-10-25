@@ -3,11 +3,13 @@ package org.treeleaf.web.starter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -25,6 +27,7 @@ import org.treeleaf.web.spring.handler.TextHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.interceptor.DBConnectionHandlerInterceptor;
 import org.treeleaf.web.spring.interceptor.MultipleHandlerInerceptor;
 import org.treeleaf.web.spring.interceptor.PrintLogHandlerInerceptor;
+import org.treeleaf.web.spring.resovler.ExExceptionHanlder;
 import org.treeleaf.web.spring.resovler.ExHandlerExceptionResolver;
 import org.treeleaf.web.spring.resovler.ExtDefaultExceptionHandler;
 
@@ -81,16 +84,14 @@ public class WebStarterConfiguration {
     }
 
     @Bean
-    public ExtDefaultExceptionHandler extDefaultExceptionHandler() {
-        ExtDefaultExceptionHandler exExceptionHanlder = new ExtDefaultExceptionHandler();
-        exExceptionHanlder.setTip(webStarterConfigurationProperties.getErrorTip());
-        exExceptionHanlder.setErrorView(webStarterConfigurationProperties.getErrorView());
-        exExceptionHanlder.setRedirect(webStarterConfigurationProperties.isErrorRedirect());
+    @ConfigurationProperties(prefix = "treeleaf.web")
+    public ExExceptionHanlder extDefaultExceptionHandler() throws IllegalAccessException, InstantiationException {
+        ExExceptionHanlder exExceptionHanlder = webStarterConfigurationProperties.getExceptionHanlderClass().newInstance();
         return exExceptionHanlder;
     }
 
     @Bean
-    public ExHandlerExceptionResolver exHandlerExceptionResolver() {
+    public ExHandlerExceptionResolver exHandlerExceptionResolver() throws InstantiationException, IllegalAccessException {
         ExHandlerExceptionResolver handler = new ExHandlerExceptionResolver();
         handler.setStatus(200);
         handler.setExExceptionHanlder(extDefaultExceptionHandler());
@@ -127,7 +128,11 @@ public class WebStarterConfiguration {
             @Override
             public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
 
-                exceptionResolvers.add(0, exHandlerExceptionResolver());
+                try {
+                    exceptionResolvers.add(0, exHandlerExceptionResolver());
+                } catch (Exception e) {
+                    log.error("初始化异常处理器失败", e);
+                }
 
                 super.configureHandlerExceptionResolvers(exceptionResolvers);
             }

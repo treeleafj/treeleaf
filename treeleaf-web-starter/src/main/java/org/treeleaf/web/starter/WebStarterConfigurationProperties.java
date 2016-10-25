@@ -2,6 +2,8 @@ package org.treeleaf.web.starter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.treeleaf.web.spring.resovler.ExExceptionHanlder;
+import org.treeleaf.web.spring.resovler.ExtDefaultExceptionHandler;
 
 /**
  * web端配置
@@ -21,7 +23,7 @@ public class WebStarterConfigurationProperties {
     /**
      * 发生错误时,页面是否采用redirect方式重定向到错误页面
      */
-    private boolean errorRedirect = false;
+    private boolean redirect = false;
 
     /**
      * 错误页面地址
@@ -38,6 +40,8 @@ public class WebStarterConfigurationProperties {
      */
     private String suffix = ".jsp";
 
+    private Class<? extends ExExceptionHanlder> exceptionHanlderClass = ExtDefaultExceptionHandler.class;
+
     public String getErrorTip() {
         return errorTip;
     }
@@ -47,12 +51,12 @@ public class WebStarterConfigurationProperties {
         return this;
     }
 
-    public boolean isErrorRedirect() {
-        return errorRedirect;
+    public boolean isRedirect() {
+        return redirect;
     }
 
-    public WebStarterConfigurationProperties setErrorRedirect(boolean errorRedirect) {
-        this.errorRedirect = errorRedirect;
+    public WebStarterConfigurationProperties setRedirect(boolean redirect) {
+        this.redirect = redirect;
         return this;
     }
 
@@ -80,6 +84,15 @@ public class WebStarterConfigurationProperties {
 
     public WebStarterConfigurationProperties setPrefix(String prefix) {
         this.prefix = prefix;
+        return this;
+    }
+
+    public Class<? extends ExExceptionHanlder> getExceptionHanlderClass() {
+        return exceptionHanlderClass;
+    }
+
+    public WebStarterConfigurationProperties setExceptionHanlderClass(Class<? extends ExExceptionHanlder> exceptionHanlderClass) {
+        this.exceptionHanlderClass = exceptionHanlderClass;
         return this;
     }
 }
