@@ -17,7 +17,9 @@ import org.treeleaf.db.sql.SqlAnalyzerFactory;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,7 +30,7 @@ import java.util.List;
  */
 public class MySqlDBModelOperator extends DefaultDBOperator {
 
-    private static Logger log = LoggerFactory.getLogger(MySqlDBModelOperator.class);
+    private Logger log = LoggerFactory.getLogger(MySqlDBModelOperator.class);
 
     protected SqlAnalyzer sqlAnalyzer = null;
 
@@ -50,7 +52,7 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeInsert(dbTableMeta, model);
 
-        log.debug("sql:" + analyzeResult.getSql() + "; param:" + Arrays.toString(analyzeResult.getParams()));
+        printSQL(analyzeResult.getSql(), analyzeResult.getParams());
 
         Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
 
@@ -83,7 +85,7 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
     public <T extends Model> List<T> findByExample(Example example, Class<T> classz, Connection... connection) {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeSelectByExample(dbTableMeta, example);
-        log.debug("sql:[" + analyzeResult.getSql() + "] param:[" + Arrays.toString(analyzeResult.getParams()) + "]");
+        printSQL(analyzeResult.getSql(), analyzeResult.getParams());
 
         Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
 
@@ -107,6 +109,19 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
     @Override
     public SqlAnalyzer getSqlAnalyzer() {
         return this.sqlAnalyzer;
+    }
+
+    protected void printSQL(String sql, Object[] params) {
+        Object[] newParam = new Object[params.length];
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        for (int i = 0; i < params.length; i++) {
+            if (params[i] instanceof Date) {
+                newParam[i] = dateFormat.format(params[i]);
+            } else {
+                newParam[i] = params[i];
+            }
+        }
+        log.info("sql:[{}]; param:[{}]", sql, Arrays.toString(newParam));
     }
 
 }
