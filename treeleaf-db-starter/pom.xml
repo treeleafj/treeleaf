@@ -35,7 +35,6 @@
         <dependency>
             <groupId>com.github.treeleafj</groupId>
             <artifactId>treeleaf-db</artifactId>
-            <version>1.3.0.SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
