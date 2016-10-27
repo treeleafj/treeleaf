@@ -25,6 +25,13 @@
             <artifactId>jedis</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.1.3</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>
