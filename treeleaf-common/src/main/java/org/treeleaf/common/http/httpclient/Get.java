@@ -51,7 +51,7 @@ public class Get extends Http<Get> {
         try {
             httpClient = buildHttpClient();
         } catch (Exception e) {
-            throw new HttpException("get方式请求远程地址" + address + "失败", e);
+            throw new HttpException("构建httpclient失败", e);
         }
 
         HttpUriRequest httpUriRequest = this.buildHttpUriRequest(RequestBuilder.get());

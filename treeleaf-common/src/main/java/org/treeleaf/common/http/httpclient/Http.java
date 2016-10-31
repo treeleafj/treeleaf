@@ -3,6 +3,7 @@ package org.treeleaf.common.http.httpclient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -83,6 +84,7 @@ public abstract class Http<T extends Http> {
     public Http(String address) {
         this.address = address;
         this.ssl = StringUtils.startsWithIgnoreCase(address, "https");
+        this.header = HttpHeader.defaultHttpHeader();
     }
 
     /**

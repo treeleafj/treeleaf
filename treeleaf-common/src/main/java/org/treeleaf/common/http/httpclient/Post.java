@@ -58,7 +58,7 @@ public class Post extends Http<Post> {
         try {
             httpClient = buildHttpClient();
         } catch (Exception e) {
-            throw new HttpException("构建httpclient失败");
+            throw new HttpException("构建httpclient失败", e);
         }
 
         RequestBuilder post = RequestBuilder.post();
