@@ -11,6 +11,7 @@ import org.treeleaf.db.model.example.Example;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -66,7 +67,7 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             throw new RuntimeException("类型" + dbTableMeta.getName() + "未声明主键");
         }
 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
 
         StringBuilder sb = new StringBuilder("update ");
         sb.append(dbTableMeta.getName());
@@ -189,7 +190,7 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
 
         boolean isFirst = true;
 
-        StringBuilder stringBuilder2 = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
 
         for (int i = 0; i < example.getOredCriteria().size(); i++) {
             Criteria criteria = (Criteria) example.getOredCriteria().get(i);
@@ -199,64 +200,24 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             }
 
             if (!isFirst) {
-                stringBuilder2.append(" or ");
+                sql.append(" or ");
             }
 
             isFirst = false;
 
-            stringBuilder2.append("(");
+            sql.append("(");
             for (int j = 0; j < criteria.getAllCriteria().size(); j++) {
                 Criterion criterion = criteria.getAllCriteria().get(j);
                 if (j != 0) {
-                    stringBuilder2.append(" and ");
+                    sql.append(" and ");
                 }
+                sql.append(criterion.getCondition());
 
-                if (criterion.isNoValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-
-                } else if (criterion.isSingleValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append(" ? ");
-                    params.add(criterion.getValue());
-
-                } else if (criterion.isBetweenValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append(" ? ");
-                    stringBuilder2.append(" and ");
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append(" ? ");
-
-                    params.add(criterion.getValue());
-                    params.add(criterion.getSecondValue());
-
-                } else if (criterion.isListValue()) {
-
-                    stringBuilder2.append(criterion.getCondition());
-                    stringBuilder2.append(' ');
-                    stringBuilder2.append("(");
-
-                    List<Object> list = (List<Object>) criterion.getValue();
-
-                    for (Object o : list) {
-                        stringBuilder2.append(" ? ");
-                        stringBuilder2.append(",");
-                        params.add(o);
-                    }
-                    if (list.size() > 0) {
-                        stringBuilder2.deleteCharAt(stringBuilder2.length() - 1);
-                    }
-                    stringBuilder2.append(")");
-
-                }
+                params.addAll(Arrays.asList(criterion.getValue()));
             }
-            stringBuilder2.append(")");
+            sql.append(")");
         }
-        return stringBuilder2.toString();
+        return sql.toString();
     }
 
     @Override

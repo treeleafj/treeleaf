@@ -30,30 +30,13 @@ public class Criteria {
         return criteria;
     }
 
-    protected <T extends Criteria> T addCriterion(String condition) {
-        if (condition == null) {
-            throw new RuntimeException("Value for condition cannot be null");
-        }
-        criteria.add(new Criterion(condition));
-        return (T) this;
-    }
-
-    protected <T extends Criteria> T addCriterion(String condition, Object value) {
-        if (value == null) {
+    protected <T extends Criteria> T addCriterion(String condition, Object... values) {
+        if (values == null) {
             throw new RuntimeException("Value for " + condition + " cannot be null");
         }
-        criteria.add(new Criterion(condition, value));
+        criteria.add(new Criterion(condition, values));
         return (T) this;
     }
-
-    protected <T extends Criteria> T addCriterion(String condition, Object value1, Object value2) {
-        if (value1 == null || value2 == null) {
-            throw new RuntimeException("Between values for " + condition + " cannot be null");
-        }
-        criteria.add(new Criterion(condition, value1, value2));
-        return (T) this;
-    }
-
 
     //子类继承的时候写的代码格式(严格遵守以下格式写方法名):
     /*public Criteria andIdIsNull() {
