@@ -1,5 +1,6 @@
 package org.treeleaf.db;
 
+import org.treeleaf.common.bean.PageResult;
 import org.treeleaf.db.model.Model;
 import org.treeleaf.db.model.example.Example;
 
@@ -66,7 +67,28 @@ public interface DBModelOperator extends DBOperator {
      * @param <T>
      * @return
      */
-    <T extends Model> T findOneByExample(Example example, Class<T> classz, Connection... connection);
+    default <T extends Model> T findOneByExample(Example example, Class<T> classz, Connection... connection) {
+        List<T> list = this.findByExample(example, classz, connection);
+        if (list.size() > 1) {
+            throw new RuntimeException("指定返回一条数据,却查询出" + list.size() + "条数据!!!");
+        }
+        return list.size() == 1 ? list.get(0) : null;
+    }
+
+    /**
+     * 查询分页结果
+     *
+     * @param example
+     * @param classz
+     * @param connection
+     * @param <T>
+     * @return
+     */
+    default <T extends Model> PageResult<T> findPageByExample(Example example, Class<T> classz, Connection... connection) {
+        List<T> list = this.findByExample(example, classz, connection);
+        long total = this.countByExample(example, classz, connection);
+        return new PageResult<>(example.getPageable(), list, total);
+    }
 
     /**
      * 根据表达式统计长度
