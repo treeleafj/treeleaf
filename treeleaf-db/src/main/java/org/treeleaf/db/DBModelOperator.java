@@ -19,7 +19,7 @@ public interface DBModelOperator extends DBOperator {
      *
      * @param model
      */
-    void save(Object model, Connection... connection);
+    Serializable save(Object model, Connection... connection);
 
     /**
      * 更新指定Id的数据

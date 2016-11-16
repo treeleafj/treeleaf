@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treeleaf.common.bean.FastBeanUtils;
 import org.treeleaf.db.handler.AnnotationBeanListHandler;
+import org.treeleaf.db.meta.DBColumnMeta;
 import org.treeleaf.db.meta.DBTableMeta;
 import org.treeleaf.db.meta.DBTableMetaFactory;
 import org.treeleaf.db.model.Model;
@@ -14,6 +15,7 @@ import org.treeleaf.db.sql.AnalyzeResult;
 import org.treeleaf.db.sql.SqlAnalyzer;
 import org.treeleaf.db.sql.SqlAnalyzerFactory;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -43,10 +45,10 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
      *
      * @param model
      */
-    public void save(Object model, Connection... connection) {
+    public Serializable save(Object model, Connection... connection) {
         if (model == null) {
             log.warn("更新数据失败,传入的model对象为null");
-            return;
+            return null;
         }
 
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
@@ -65,6 +67,10 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
                 Object id = queryRunner.query(conn, "SELECT LAST_INSERT_ID()", new ScalarHandler(1));
                 Field field = dbTableMeta.getPrimaryKeys().get(0).getField();
                 FastBeanUtils.setFieldValue(field, model, id);
+                return (Serializable) id;
+            } else {
+                DBColumnMeta pk = dbTableMeta.getPrimaryKeys().get(0);
+                return (Serializable) FastBeanUtils.getFieldValue(pk.getField(), model);
             }
 
         } catch (SQLException e) {

@@ -34,7 +34,7 @@ public abstract class Example<T extends Criteria> {
     private String onWhere;
 
     public Example() {
-        oredCriteria = new ArrayList<T>();
+        oredCriteria = new ArrayList<>();
     }
 
     public String getOrderByClause() {
