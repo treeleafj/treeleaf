@@ -5,6 +5,7 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treeleaf.common.bean.FastBeanUtils;
+import org.treeleaf.common.safe.ID;
 import org.treeleaf.db.handler.AnnotationBeanListHandler;
 import org.treeleaf.db.meta.DBColumnMeta;
 import org.treeleaf.db.meta.DBTableMeta;
@@ -16,7 +17,6 @@ import org.treeleaf.db.sql.SqlAnalyzer;
 import org.treeleaf.db.sql.SqlAnalyzerFactory;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -52,6 +52,13 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
         }
 
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
+        DBColumnMeta pk = dbTableMeta.getPrimaryKeys().get(0);
+        if (dbTableMeta.getPrimaryKeys().size() == 1) {
+            if (FastBeanUtils.getFieldValue(pk.getField(), model) == null && !pk.isAutoIncremen()) {//非数据库自增的主键,如果没传,则自动生成一个
+                FastBeanUtils.setFieldValue(pk.getField(), model, ID.get());
+            }
+        }
+
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeInsert(dbTableMeta, model);
 
         printSQL(analyzeResult.getSql(), analyzeResult.getParams());
@@ -62,14 +69,11 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
         try {
             queryRunner.update(conn, analyzeResult.getSql(), analyzeResult.getParams());
 
-            if (dbTableMeta.getPrimaryKeys().size() == 1
-                    && dbTableMeta.getPrimaryKeys().get(0).isAutoIncremen()) {
+            if (dbTableMeta.getPrimaryKeys().size() == 1 && pk.isAutoIncremen()) {//对于基于mysql数据库自增的主键,这里查出来,并设值回去
                 Object id = queryRunner.query(conn, "SELECT LAST_INSERT_ID()", new ScalarHandler(1));
-                Field field = dbTableMeta.getPrimaryKeys().get(0).getField();
-                FastBeanUtils.setFieldValue(field, model, id);
+                FastBeanUtils.setFieldValue(pk.getField(), model, id);
                 return (Serializable) id;
             } else {
-                DBColumnMeta pk = dbTableMeta.getPrimaryKeys().get(0);
                 return (Serializable) FastBeanUtils.getFieldValue(pk.getField(), model);
             }
 
