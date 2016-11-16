@@ -62,7 +62,10 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
 
     @Override
     public AnalyzeResult analyzeUpdateByPrimaryKey(DBTableMeta dbTableMeta, Object model) {
+        return analyzeUpdateByPrimaryKey(dbTableMeta, model, true);
+    }
 
+    private AnalyzeResult analyzeUpdateByPrimaryKey(DBTableMeta dbTableMeta, Object model, boolean hasNull) {
         if (dbTableMeta.getPrimaryKeys().size() == 0) {
             throw new RuntimeException("类型" + dbTableMeta.getName() + "未声明主键");
         }
@@ -77,13 +80,17 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
         for (int i = 0; i < dbTableMeta.getColumnMetas().size(); i++) {
             DBColumnMeta dbColumnMeta = dbTableMeta.getColumnMetas().get(i);
             if (!dbColumnMeta.isPrimaryKey()) {
+                Field field = dbColumnMeta.getField();
+                Object v = FastBeanUtils.getFieldValue(field, model);
+                if (!hasNull && v == null) {
+                    continue;
+                }
                 sb.append('`');
                 sb.append(dbColumnMeta.getName());
                 sb.append('`');
                 sb.append(" = ?,");
 
-                Field field = dbColumnMeta.getField();
-                params.add(FastBeanUtils.getFieldValue(field, model));
+                params.add(v);
             }
         }
 
@@ -120,7 +127,7 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             throw new RuntimeException("类型" + dbTableMeta.getName() + "未声明字段");
         }
 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
 
         StringBuilder sb = new StringBuilder("insert into ");
         sb.append(dbTableMeta.getName());
@@ -174,7 +181,7 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             }
         }
 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         String where = buildWhere(example, params);
 
         if (StringUtils.isNotBlank(where)) {
@@ -235,7 +242,7 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
             }
         }
 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         String where = buildWhere(example, params);
 
         if (StringUtils.isNotBlank(where)) {
@@ -245,5 +252,10 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
 
         String sql = stringBuilder1.toString();
         return new AnalyzeResult(sql, params.toArray());
+    }
+
+    @Override
+    public AnalyzeResult analyzeNotNullUpdateByPrimaryKey(DBTableMeta dbTableMeta, Object model) {
+        return analyzeUpdateByPrimaryKey(dbTableMeta, model, false);
     }
 }

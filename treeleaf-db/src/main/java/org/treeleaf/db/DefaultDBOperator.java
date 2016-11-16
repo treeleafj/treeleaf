@@ -113,6 +113,23 @@ public abstract class DefaultDBOperator implements DBModelOperator {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeUpdateByPrimaryKey(dbTableMeta, model);
 
+        return doUpdate(analyzeResult, connection);
+    }
+
+    @Override
+    public boolean updateNotNull(Object model, Connection... connection) {
+        if (model == null) {
+            log.warn("更新数据失败,传入的model对象为null");
+            return false;
+        }
+
+        DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
+        AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeNotNullUpdateByPrimaryKey(dbTableMeta, model);
+
+        return doUpdate(analyzeResult, connection);
+    }
+
+    private boolean doUpdate(AnalyzeResult analyzeResult, Connection[] connection) {
         log.debug("sql:" + analyzeResult.getSql() + "; param:" + Arrays.toString(analyzeResult.getParams()));
 
         Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();

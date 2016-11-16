@@ -70,4 +70,13 @@ public interface SqlAnalyzer {
      * @return
      */
     AnalyzeResult analyzeSumByExample(DBTableMeta dbTableMeta, Example example);
+
+    /**
+     * 解析通过主键修改非null数据的sql
+     *
+     * @param dbTableMeta
+     * @param model
+     * @return
+     */
+    AnalyzeResult analyzeNotNullUpdateByPrimaryKey(DBTableMeta dbTableMeta, Object model);
 }

@@ -3,8 +3,6 @@ package org.treeleaf.db.sql;
 import org.apache.commons.lang3.StringUtils;
 import org.treeleaf.db.meta.DBTableMeta;
 import org.treeleaf.db.meta.DBTableMetaFactory;
-import org.treeleaf.db.model.example.Criteria;
-import org.treeleaf.db.model.example.Criterion;
 import org.treeleaf.db.model.example.Example;
 
 import java.util.ArrayList;

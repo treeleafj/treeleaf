@@ -30,6 +30,15 @@ public interface DBModelOperator extends DBOperator {
     boolean update(Object model, Connection... connection);
 
     /**
+     * 只更新mode中不为null的列
+     *
+     * @param model
+     * @param connection
+     * @return
+     */
+    boolean updateNotNull(Object model, Connection... connection);
+
+    /**
      * 删除指定个Id的数据
      *
      * @param id
