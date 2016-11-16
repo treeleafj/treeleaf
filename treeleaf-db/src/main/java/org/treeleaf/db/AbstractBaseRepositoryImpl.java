@@ -43,6 +43,11 @@ public abstract class AbstractBaseRepositoryImpl<T extends Model> implements Bas
     }
 
     @Override
+    public T findById(Serializable id) {
+        return getDbModelOperator().findById(id, modelType);
+    }
+
+    @Override
     public PageResult<T> findPageByExample(Example example) {
         return getDbModelOperator().findPageByExample(example, modelType);
     }

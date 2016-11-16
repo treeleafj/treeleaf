@@ -21,6 +21,8 @@ public interface BaseRepository<T extends Model> {
 
     boolean delete(String id);
 
+    T findById(Serializable id);
+
     PageResult<T> findPageByExample(Example example);
 
     List<T> findByExample(Example example);
