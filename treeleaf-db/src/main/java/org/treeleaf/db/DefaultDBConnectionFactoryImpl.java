@@ -1,5 +1,7 @@
 package org.treeleaf.db;
 
+import org.apache.commons.dbutils.DbUtils;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,13 +18,6 @@ public class DefaultDBConnectionFactoryImpl extends DBConnectionFactory {
         this.dataSource = dataSource;
     }
 
-    /**
-     * 初始化ConnectionContext,便于其他地方获取数据库链接
-     */
-    public void init() {
-        ConnectionContext.setDbConnectionFactory(this);
-    }
-
     @Override
     public Connection getConnection() {
         //使用DataSourceUtils,便于spring的事务处理
@@ -31,5 +26,10 @@ public class DefaultDBConnectionFactoryImpl extends DBConnectionFactory {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void releaseConnection(Connection connection) {
+        DbUtils.closeQuietly(connection);
     }
 }

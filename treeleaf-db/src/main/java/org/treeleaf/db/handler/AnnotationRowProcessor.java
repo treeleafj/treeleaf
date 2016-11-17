@@ -1,11 +1,11 @@
 package org.treeleaf.db.handler;
 
+import org.apache.commons.dbutils.BasicRowProcessor;
 import org.treeleaf.common.bean.FastBeanUtils;
 import org.treeleaf.db.meta.DBColumnMeta;
 import org.treeleaf.db.meta.DBTableMeta;
 import org.treeleaf.db.meta.analyzer.DBMetaAnalyzer;
 import org.treeleaf.db.meta.analyzer.DBMetaAnalyzerFactory;
-import org.apache.commons.dbutils.BasicRowProcessor;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

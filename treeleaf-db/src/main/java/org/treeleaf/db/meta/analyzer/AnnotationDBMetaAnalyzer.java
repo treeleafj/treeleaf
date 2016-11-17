@@ -1,12 +1,12 @@
 package org.treeleaf.db.meta.analyzer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treeleaf.db.meta.DBColumnMeta;
 import org.treeleaf.db.meta.DBTableMeta;
 import org.treeleaf.db.meta.annotation.Column;
 import org.treeleaf.db.meta.annotation.Table;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 

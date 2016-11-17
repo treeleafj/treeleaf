@@ -5,31 +5,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.treeleaf.common.json.Jsoner;
 import org.treeleaf.web.spring.handler.ClientInfoHandlerMethodArgumentResolver;
 import org.treeleaf.web.spring.handler.HtmlHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.handler.ParamHandlerMethodArgumentResolver;
 import org.treeleaf.web.spring.handler.RedirectHandlerMethodReturnValueHandler;
 import org.treeleaf.web.spring.handler.TextHandlerMethodReturnValueHandler;
-import org.treeleaf.web.spring.interceptor.DBConnectionHandlerInterceptor;
 import org.treeleaf.web.spring.interceptor.MultipleHandlerInerceptor;
 import org.treeleaf.web.spring.interceptor.PrintLogHandlerInerceptor;
 import org.treeleaf.web.spring.resovler.ExExceptionHanlder;
 import org.treeleaf.web.spring.resovler.ExHandlerExceptionResolver;
-import org.treeleaf.web.spring.resovler.ExtDefaultExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +44,6 @@ public class WebStarterConfiguration {
     @Bean
     public PrintLogHandlerInerceptor printLogHandlerInerceptor() {
         return new PrintLogHandlerInerceptor();
-    }
-
-    @Bean
-    public DBConnectionHandlerInterceptor dbConnectionHandlerInterceptor() {
-        return new DBConnectionHandlerInterceptor();
     }
 
     @Bean
@@ -141,7 +129,6 @@ public class WebStarterConfiguration {
             public void addInterceptors(InterceptorRegistry registry) {
                 List list = new ArrayList<>(2);
                 list.add(printLogHandlerInerceptor());
-                list.add(dbConnectionHandlerInterceptor());
                 MultipleHandlerInerceptor multipleHandlerInerceptor = new MultipleHandlerInerceptor();
                 multipleHandlerInerceptor.setHandlers(list);
                 registry.addInterceptor(multipleHandlerInerceptor);

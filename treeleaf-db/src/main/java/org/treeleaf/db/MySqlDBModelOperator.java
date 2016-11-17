@@ -19,9 +19,6 @@ import org.treeleaf.db.sql.SqlAnalyzerFactory;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,7 +33,8 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
 
     protected SqlAnalyzer sqlAnalyzer = null;
 
-    public MySqlDBModelOperator() {
+    public MySqlDBModelOperator(DBConnectionFactory dbConnectionFactory) {
+        super(dbConnectionFactory);
         this.sqlAnalyzer = SqlAnalyzerFactory.getSqlAnalyzer(DBType.MYSQL);
     }
 
@@ -45,7 +43,7 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
      *
      * @param model
      */
-    public Serializable save(Object model, Connection... connection) {
+    public Serializable save(Object model) {
         if (model == null) {
             log.warn("更新数据失败,传入的model对象为null");
             return null;
@@ -63,7 +61,7 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
 
         printSQL(analyzeResult.getSql(), analyzeResult.getParams());
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        Connection conn = getDbConnectionFactory().getConnection();
 
         QueryRunner queryRunner = new QueryRunner();
         try {
@@ -79,6 +77,8 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
 
         } catch (SQLException e) {
             throw new RuntimeException("保存数据失败", e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
 
     }
@@ -88,41 +88,29 @@ public class MySqlDBModelOperator extends DefaultDBOperator {
      *
      * @param example
      * @param classz
-     * @param connection
      * @param <T>
      * @return
      */
-    public <T extends Model> List<T> findByExample(Example example, Class<T> classz, Connection... connection) {
+    public <T extends Model> List<T> findByExample(Example example, Class<T> classz) {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeSelectByExample(dbTableMeta, example);
         printSQL(analyzeResult.getSql(), analyzeResult.getParams());
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        Connection conn = getDbConnectionFactory().getConnection();
 
         QueryRunner queryRunner = new QueryRunner();
         try {
             return queryRunner.query(conn, analyzeResult.getSql(), new AnnotationBeanListHandler<>(classz), analyzeResult.getParams());
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
     @Override
     public SqlAnalyzer getSqlAnalyzer() {
         return this.sqlAnalyzer;
-    }
-
-    protected void printSQL(String sql, Object[] params) {
-        Object[] newParam = new Object[params.length];
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] instanceof Date) {
-                newParam[i] = dateFormat.format(params[i]);
-            } else {
-                newParam[i] = params[i];
-            }
-        }
-        log.info("sql:[{}]; param:[{}]", sql, Arrays.toString(newParam));
     }
 
 }

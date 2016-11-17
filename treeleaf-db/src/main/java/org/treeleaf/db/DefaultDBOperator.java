@@ -18,7 +18,13 @@ import org.treeleaf.db.sql.SqlAnalyzer;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author leaf
@@ -39,24 +45,40 @@ public abstract class DefaultDBOperator implements DBModelOperator {
         }
     };
 
+    private DBConnectionFactory dbConnectionFactory;
+
+    public DefaultDBOperator(DBConnectionFactory dbConnectionFactory) {
+        this.dbConnectionFactory = dbConnectionFactory;
+    }
+
+    public DBConnectionFactory getDbConnectionFactory() {
+        return dbConnectionFactory;
+    }
+
+    public void setDbConnectionFactory(DBConnectionFactory dbConnectionFactory) {
+        this.dbConnectionFactory = dbConnectionFactory;
+    }
+
     @Override
-    public int updateBySql(String sql, Object[] params, Connection... connection) {
+    public int updateBySql(String sql, Object[] params) {
         QueryRunner queryRunner = new QueryRunner();
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        Connection conn = getDbConnectionFactory().getConnection();
 
         try {
             return queryRunner.update(conn, sql, params);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
     @Override
-    public <T> List<T> selectBySql(String sql, Object[] params, Class<T> modelType, Connection... connection) {
+    public <T> List<T> selectBySql(String sql, Object[] params, Class<T> modelType) {
         QueryRunner queryRunner = new QueryRunner();
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        Connection conn = getDbConnectionFactory().getConnection();
 
         try {
             if (Model.class.isAssignableFrom(modelType)) {
@@ -68,15 +90,17 @@ public abstract class DefaultDBOperator implements DBModelOperator {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
     @Override
-    public <T> T selectOneBySql(String sql, Object[] params, Class<T> classz, Connection... connection) {
+    public <T> T selectOneBySql(String sql, Object[] params, Class<T> classz) {
 
         QueryRunner queryRunner = new QueryRunner();
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        Connection conn = getDbConnectionFactory().getConnection();
 
         try {
             if (classz.isAssignableFrom(Model.class)) {
@@ -94,6 +118,8 @@ public abstract class DefaultDBOperator implements DBModelOperator {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
@@ -103,7 +129,7 @@ public abstract class DefaultDBOperator implements DBModelOperator {
      * @param model
      * @return
      */
-    public boolean update(Object model, Connection... connection) {
+    public boolean update(Object model) {
 
         if (model == null) {
             log.warn("更新数据失败,传入的model对象为null");
@@ -113,11 +139,11 @@ public abstract class DefaultDBOperator implements DBModelOperator {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeUpdateByPrimaryKey(dbTableMeta, model);
 
-        return doUpdate(analyzeResult, connection);
+        return doUpdate(analyzeResult);
     }
 
     @Override
-    public boolean updateNotNull(Object model, Connection... connection) {
+    public boolean updateNotNull(Object model) {
         if (model == null) {
             log.warn("更新数据失败,传入的model对象为null");
             return false;
@@ -126,13 +152,13 @@ public abstract class DefaultDBOperator implements DBModelOperator {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(model.getClass());
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeNotNullUpdateByPrimaryKey(dbTableMeta, model);
 
-        return doUpdate(analyzeResult, connection);
+        return doUpdate(analyzeResult);
     }
 
-    private boolean doUpdate(AnalyzeResult analyzeResult, Connection[] connection) {
-        log.debug("sql:" + analyzeResult.getSql() + "; param:" + Arrays.toString(analyzeResult.getParams()));
+    private boolean doUpdate(AnalyzeResult analyzeResult) {
+        printSQL(analyzeResult.getSql(), analyzeResult.getParams());
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        Connection conn = getDbConnectionFactory().getConnection();
 
         QueryRunner queryRunner = new QueryRunner();
         try {
@@ -146,6 +172,8 @@ public abstract class DefaultDBOperator implements DBModelOperator {
             }
         } catch (SQLException e) {
             throw new RuntimeException("修改数据失败", e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
@@ -155,13 +183,15 @@ public abstract class DefaultDBOperator implements DBModelOperator {
      * @param id
      * @return
      */
-    public boolean deleteById(Serializable id, Class classz, Connection... connection) {
+    public boolean deleteById(Serializable id, Class classz) {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
         String sql = getSqlAnalyzer().analyzeDeleteByPrimaryKey(dbTableMeta);
-        log.debug("sql:" + sql + "; param:" + id);
+
+        printSQL(sql, new Object[]{id});
+
         QueryRunner queryRunner = new QueryRunner();
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        Connection conn = getDbConnectionFactory().getConnection();
 
         try {
             int num = queryRunner.update(conn, sql, id);
@@ -174,6 +204,8 @@ public abstract class DefaultDBOperator implements DBModelOperator {
             }
         } catch (SQLException e) {
             throw new RuntimeException("删除数据失败", e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
@@ -185,13 +217,14 @@ public abstract class DefaultDBOperator implements DBModelOperator {
      * @param <T>
      * @return
      */
-    public <T extends Model> T findById(Serializable id, Class<T> classz, Connection... connection) {
+    public <T extends Model> T findById(Serializable id, Class<T> classz) {
 
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
         String sql = getSqlAnalyzer().analyzeSelectByPrimaryKey(dbTableMeta);
-        log.debug("sql:" + sql + "; param:" + id);
 
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+        printSQL(sql, new Object[]{id});
+
+        Connection conn = getDbConnectionFactory().getConnection();
 
         QueryRunner queryRunner = new QueryRunner();
         try {
@@ -199,6 +232,8 @@ public abstract class DefaultDBOperator implements DBModelOperator {
             return obj;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
@@ -207,30 +242,35 @@ public abstract class DefaultDBOperator implements DBModelOperator {
      *
      * @param example
      * @param classz
-     * @param connection
      * @param <T>
      * @return
      */
-    public <T> long countByExample(Example example, Class<T> classz, Connection... connection) {
+    public <T> long countByExample(Example example, Class<T> classz) {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeCountByExample(dbTableMeta, example);
-        log.debug("sql:" + analyzeResult.getSql() + "; param:" + Arrays.toString(analyzeResult.getParams()));
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+
+        printSQL(analyzeResult.getSql(), analyzeResult.getParams());
+
+        Connection conn = getDbConnectionFactory().getConnection();
 
         QueryRunner queryRunner = new QueryRunner();
         try {
             return queryRunner.query(conn, analyzeResult.getSql(), new ScalarHandler<Long>(1), analyzeResult.getParams());
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
     @Override
-    public <T> Object sumByExample(Example example, Class<T> classz, Connection... connection) {
+    public <T> Object sumByExample(Example example, Class<T> classz) {
         DBTableMeta dbTableMeta = DBTableMetaFactory.getDBTableMeta(classz);
         AnalyzeResult analyzeResult = getSqlAnalyzer().analyzeSumByExample(dbTableMeta, example);
-        log.debug("sql:" + analyzeResult.getSql() + "; param:" + Arrays.toString(analyzeResult.getParams()));
-        Connection conn = connection.length > 0 ? connection[0] : ConnectionContext.getConnection();
+
+        printSQL(analyzeResult.getSql(), analyzeResult.getParams());
+
+        Connection conn = getDbConnectionFactory().getConnection();
 
         QueryRunner queryRunner = new QueryRunner();
         try {
@@ -238,6 +278,8 @@ public abstract class DefaultDBOperator implements DBModelOperator {
             return result == null ? 0D : result;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            getDbConnectionFactory().releaseConnection(conn);
         }
     }
 
@@ -247,4 +289,17 @@ public abstract class DefaultDBOperator implements DBModelOperator {
      * @return
      */
     public abstract SqlAnalyzer getSqlAnalyzer();
+
+    protected void printSQL(String sql, Object[] params) {
+        Object[] newParam = new Object[params.length];
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        for (int i = 0; i < params.length; i++) {
+            if (params[i] instanceof Date) {
+                newParam[i] = dateFormat.format(params[i]);
+            } else {
+                newParam[i] = params[i];
+            }
+        }
+        log.info("sql:[{}]; param:[{}]", sql, Arrays.toString(newParam));
+    }
 }

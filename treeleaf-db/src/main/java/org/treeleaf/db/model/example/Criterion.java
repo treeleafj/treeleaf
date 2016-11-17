@@ -1,7 +1,5 @@
 package org.treeleaf.db.model.example;
 
-import java.util.List;
-
 /**
  * 准则
  *

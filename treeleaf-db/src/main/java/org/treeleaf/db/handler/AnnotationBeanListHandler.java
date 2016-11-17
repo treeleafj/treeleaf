@@ -1,8 +1,8 @@
 package org.treeleaf.db.handler;
 
-import org.treeleaf.db.model.Model;
 import org.apache.commons.dbutils.RowProcessor;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.treeleaf.db.model.Model;
 
 /**
  * @Author leaf
