@@ -64,7 +64,7 @@ public abstract class DefaultDBOperator implements DBModelOperator {
         QueryRunner queryRunner = new QueryRunner();
 
         Connection conn = getDbConnectionFactory().getConnection();
-
+        printSQL(sql, params);
         try {
             return queryRunner.update(conn, sql, params);
         } catch (SQLException e) {
@@ -80,6 +80,7 @@ public abstract class DefaultDBOperator implements DBModelOperator {
 
         Connection conn = getDbConnectionFactory().getConnection();
 
+        printSQL(sql, params);
         try {
             if (Model.class.isAssignableFrom(modelType)) {
                 return (List<T>) queryRunner.query(conn, sql, new AnnotationBeanListHandler(modelType), params);
@@ -102,6 +103,7 @@ public abstract class DefaultDBOperator implements DBModelOperator {
 
         Connection conn = getDbConnectionFactory().getConnection();
 
+        printSQL(sql, params);
         try {
             if (classz.isAssignableFrom(Model.class)) {
                 List<T> list = (List<T>) queryRunner.query(conn, sql, new AnnotationBeanListHandler(classz), params);
