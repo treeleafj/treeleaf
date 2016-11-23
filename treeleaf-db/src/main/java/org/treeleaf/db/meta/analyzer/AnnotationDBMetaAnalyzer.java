@@ -1,5 +1,6 @@
 package org.treeleaf.db.meta.analyzer;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,8 +8,10 @@ import org.treeleaf.db.meta.DBColumnMeta;
 import org.treeleaf.db.meta.DBTableMeta;
 import org.treeleaf.db.meta.annotation.Column;
 import org.treeleaf.db.meta.annotation.Table;
+import org.treeleaf.db.model.Model;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * 基于注解方式的元数据解析器
@@ -37,6 +40,12 @@ public class AnnotationDBMetaAnalyzer implements DBMetaAnalyzer<Class> {
         dbTableMeta.setModelClass(param);
 
         Field[] fields = param.getDeclaredFields();
+
+        Class superClass = param.getSuperclass();
+        while (superClass != null && !superClass.equals(Model.class)) {
+            fields = ArrayUtils.addAll(fields, superClass.getDeclaredFields());
+            superClass = superClass.getSuperclass();
+        }
 
         for (int i = 0; i < fields.length; i++) {
 
