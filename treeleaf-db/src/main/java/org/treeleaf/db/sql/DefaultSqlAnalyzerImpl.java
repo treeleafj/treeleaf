@@ -171,15 +171,6 @@ public abstract class DefaultSqlAnalyzerImpl implements SqlAnalyzer {
         StringBuilder stringBuilder1 = new StringBuilder("select count(*) from ");
         stringBuilder1.append(dbTableMeta.getName());
         stringBuilder1.append(" as a ");
-        if (example.getLeftJoin() != null) {
-            DBTableMeta leftJoinDBTableMeta = DBTableMetaFactory.getDBTableMeta(example.getLeftJoin());
-            if (leftJoinDBTableMeta != null) {
-                stringBuilder1.append("left join ");
-                stringBuilder1.append(leftJoinDBTableMeta.getName());
-                stringBuilder1.append(" as b on ");
-                stringBuilder1.append(example.getOnWhere());
-            }
-        }
 
         List<Object> params = new ArrayList<>();
         String where = buildWhere(example, params);

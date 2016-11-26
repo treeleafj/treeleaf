@@ -20,11 +20,16 @@ public class MySqlAnalyzerImpl extends DefaultSqlAnalyzerImpl {
     public AnalyzeResult analyzeSelectByExample(DBTableMeta dbTableMeta, Example example) {
         StringBuilder stringBuilder1 = new StringBuilder("select a.* from ");
         stringBuilder1.append(dbTableMeta.getName());
-
         stringBuilder1.append(" as a ");
+
         if (example.getLeftJoin() != null) {
             DBTableMeta leftJoinDBTableMeta = DBTableMetaFactory.getDBTableMeta(example.getLeftJoin());
             if (leftJoinDBTableMeta != null) {
+
+                stringBuilder1 = new StringBuilder("select a.*, b.* from ");
+                stringBuilder1.append(dbTableMeta.getName());
+                stringBuilder1.append(" as a ");
+
                 stringBuilder1.append("left join ");
                 stringBuilder1.append(leftJoinDBTableMeta.getName());
                 stringBuilder1.append(" as b on ");
