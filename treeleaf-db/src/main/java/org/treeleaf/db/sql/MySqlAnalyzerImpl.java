@@ -25,8 +25,8 @@ public class MySqlAnalyzerImpl extends DefaultSqlAnalyzerImpl {
         if (example.getLeftJoin() != null) {
             DBTableMeta leftJoinDBTableMeta = DBTableMetaFactory.getDBTableMeta(example.getLeftJoin());
             if (leftJoinDBTableMeta != null) {
-
-                stringBuilder1 = new StringBuilder("select a.*, b.* from ");
+                String field = StringUtils.isNotBlank(example.getLeftField()) ? example.getLeftField() : "b.*";
+                stringBuilder1 = new StringBuilder("select a.*, " + field + " from ");
                 stringBuilder1.append(dbTableMeta.getName());
                 stringBuilder1.append(" as a ");
 

@@ -26,6 +26,8 @@ public abstract class Example<T extends Criteria> {
 
     private Class leftJoin;
 
+    private String leftField;
+
     /**
      * 统计的某个字段
      */
@@ -116,6 +118,15 @@ public abstract class Example<T extends Criteria> {
     public Example on(String onWhere) {
         this.onWhere = onWhere;
         return this;
+    }
+
+    public Example leftField(String leftField) {
+        this.leftField = leftField;
+        return this;
+    }
+
+    public String getLeftField() {
+        return leftField;
     }
 
     public Class getLeftJoin() {
