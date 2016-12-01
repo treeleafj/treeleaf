@@ -14,6 +14,8 @@ public class Html implements Result {
      */
     private Object model;
 
+    private boolean isRoot = false;
+
     public Html() {
     }
 
@@ -42,10 +44,21 @@ public class Html implements Result {
         this.path = path;
     }
 
+    public boolean isRoot() {
+        return isRoot;
+    }
+
+    public Html setRoot(boolean root) {
+        isRoot = root;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Html{" +
-                "model=" + model +
+                "path='" + path + '\'' +
+                ", model=" + model +
+                ", isRoot=" + isRoot +
                 '}';
     }
 }

@@ -8,7 +8,7 @@ public class ErrorInfo {
 
     private String uri;
 
-    private Exception exception;
+    private Throwable exception;
 
     private String ext;
 
@@ -20,11 +20,11 @@ public class ErrorInfo {
         this.uri = uri;
     }
 
-    public Exception getException() {
+    public Throwable getException() {
         return exception;
     }
 
-    public void setException(Exception exception) {
+    public void setException(Throwable exception) {
         this.exception = exception;
     }
 

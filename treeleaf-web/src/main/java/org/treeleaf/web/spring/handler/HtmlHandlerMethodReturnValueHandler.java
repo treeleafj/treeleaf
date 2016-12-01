@@ -1,5 +1,6 @@
 package org.treeleaf.web.spring.handler;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -7,6 +8,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.treeleaf.web.Html;
+
+import java.util.Map;
 
 /**
  * 处理Controller返回Html的结果,底层采用request.forwaed方式进行跳转
@@ -37,9 +40,13 @@ public class HtmlHandlerMethodReturnValueHandler implements HandlerMethodReturnV
             }
 
             if (html.getModel() != null) {
-                mavContainer.getModel().put("model", html.getModel());
+                if (html.isRoot()) {
+                    Map<? extends String, ?> map = html.getModel() instanceof Map ? (Map<? extends String, ?>) html.getModel() : PropertyUtils.describe(html.getModel());
+                    mavContainer.getModel().putAll(map);
+                } else {
+                    mavContainer.getModel().put("model", html.getModel());
+                }
             }
         }
     }
-
 }
