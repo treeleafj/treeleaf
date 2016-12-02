@@ -18,7 +18,7 @@ public class Pageable {
     /**
      * 每页大小,从1开始
      */
-    private int pageSize = 1;
+    private int pageSize = 10;
 
     public Pageable() {
     }

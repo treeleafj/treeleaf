@@ -62,7 +62,7 @@ public abstract class Example<T extends Criteria> {
     }
 
     public int getLimit() {
-        return this.pageable != null ? this.pageable.getPageSize() : 10;
+        return this.pageable != null ? this.pageable.getPageSize() : -1;
     }
 
     public long getStart() {
