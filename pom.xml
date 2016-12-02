@@ -18,7 +18,6 @@
         <module>treeleaf-db</module>
         <module>treeleaf-web-starter</module>
         <module>treeleaf-db-starter</module>
-        <module>treeleaf-web-demo</module>
     </modules>
 
     <groupId>com.github.treeleafj</groupId>
