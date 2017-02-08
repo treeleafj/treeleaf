@@ -2,13 +2,15 @@ package org.treeleaf.common.bean;
 
 import org.treeleaf.common.safe.Assert;
 
+import java.io.Serializable;
+
 /**
  * 分页请求对象
  *
  * @Author leaf
  * 2015/10/28 0028 23:04.
  */
-public class Pageable {
+public class Pageable implements Serializable {
 
     /**
      * 页码,从1开始

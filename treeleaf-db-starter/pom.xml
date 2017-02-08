@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.treeleafj</groupId>
         <artifactId>treeleaf</artifactId>
-        <version>1.3.1.7</version>
+        <version>1.3.1.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <version>1.3.1.7</version>
+    <version>1.3.1.8</version>
     <artifactId>treeleaf-db-starter</artifactId>
 
     <name>${project.artifactId}</name>

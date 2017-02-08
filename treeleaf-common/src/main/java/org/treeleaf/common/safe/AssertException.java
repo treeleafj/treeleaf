@@ -8,7 +8,7 @@ import org.treeleaf.common.exception.RetCodeSupport;
  * @Author leaf
  * 2015/6/26 0026 0:36.
  */
-public class AssertException extends RuntimeException implements BaseException, RetCodeSupport {
+public class AssertException extends BaseException implements RetCodeSupport {
 
     private String retCode = RetCode.FAIL_PARAM;
 

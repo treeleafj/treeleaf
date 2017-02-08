@@ -7,7 +7,7 @@ import org.treeleaf.common.exception.RetCodeSupport;
 /**
  * Created by yaoshuhong on 2015/6/29.
  */
-public class HttpException extends RuntimeException implements BaseException, RetCodeSupport {
+public class HttpException extends BaseException implements RetCodeSupport {
 
     private String retCode = RetCode.FAIL_REMOTE;
 

@@ -1,5 +1,6 @@
 package org.treeleaf.common.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @Author leaf
  * 2015/10/12 0012 22:30.
  */
-public class PageResult<T> {
+public class PageResult<T> implements Serializable {
 
     private Pageable pageable;
 

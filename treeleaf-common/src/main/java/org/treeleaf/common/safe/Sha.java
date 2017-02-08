@@ -101,4 +101,8 @@ public class Sha {
         }
         return des;
     }
+
+    public static String sha256ToHex(String s) {
+        return bytes2Hex(sha256(s));
+    }
 }

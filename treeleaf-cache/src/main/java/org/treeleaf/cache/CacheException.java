@@ -9,7 +9,7 @@ import org.treeleaf.common.exception.RetCodeSupport;
  * <p>
  * Created by yaoshuhong on 2015/6/3.
  */
-public class CacheException extends RuntimeException implements BaseException, RetCodeSupport {
+public class CacheException extends BaseException implements RetCodeSupport {
 
     /**
      * 错误码
