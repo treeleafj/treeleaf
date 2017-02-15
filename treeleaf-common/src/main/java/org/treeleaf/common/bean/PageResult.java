@@ -122,22 +122,4 @@ public class PageResult<T> implements Serializable {
         return total;
     }
 
-    public Pageable getPageable() {
-        return pageable;
-    }
-
-    public PageResult setPageable(Pageable pageable) {
-        this.pageable = pageable;
-        return this;
-    }
-
-    public PageResult setList(List<T> list) {
-        this.list = list;
-        return this;
-    }
-
-    public PageResult setTotal(long total) {
-        this.total = total;
-        return this;
-    }
 }
