@@ -72,7 +72,7 @@ public class Json extends Text {
                 map = (Map) this.data;
             } else if (this.data instanceof Collection || this.data.getClass().isArray()) {
                 map = new HashMap<>();
-                map.put("array", this.data);
+                map.put("list", this.data);
             } else {
                 try {
                     map = PropertyUtils.describe(this.data);
